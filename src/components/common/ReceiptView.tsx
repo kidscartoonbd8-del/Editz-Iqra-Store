@@ -11,7 +11,8 @@ import {
   Sparkles,
   FileImage,
   FileText,
-  Check
+  Check,
+  Share2
 } from 'lucide-react';
 import { downloadReceiptHtml, downloadReceiptImage } from '../../utils/receiptGenerator.ts';
 
@@ -36,7 +37,7 @@ export const ReceiptView: React.FC<ReceiptViewProps> = ({ order, onClose }) => {
   const handleDownloadImage = () => {
     try {
       downloadReceiptImage(order);
-      setDownloadSuccess('রসিদের ছবি (PNG Image) সফলভাবে ডাউনলোড হয়েছে!');
+      setDownloadSuccess('রসিদের ছবি (PNG Image) আপনার ডিভাইসে সফলভাবে সেভ হয়েছে!');
       setTimeout(() => setDownloadSuccess(null), 4000);
     } catch (err) {
       console.error('Download Image failed:', err);
@@ -45,12 +46,13 @@ export const ReceiptView: React.FC<ReceiptViewProps> = ({ order, onClose }) => {
 
   const handlePrint = () => {
     try {
-      // First try window.print
+      // Direct window.print
       window.print();
+      setDownloadSuccess('প্রিন্ট ডায়ালগ চালু করা হয়েছে (অথবা নিচের ডাউনলোড বাটন ব্যবহার করুন)');
+      setTimeout(() => setDownloadSuccess(null), 4000);
     } catch (err) {
-      // If sandboxed in iframe, fallback to downloading HTML receipt with auto-print
-      console.warn('window.print failed or was blocked by iframe sandbox, downloading HTML invoice instead:', err);
-      handleDownloadFile();
+      console.warn('window.print blocked or restricted, triggering direct PNG image download:', err);
+      handleDownloadImage();
     }
   };
 
@@ -66,21 +68,28 @@ export const ReceiptView: React.FC<ReceiptViewProps> = ({ order, onClose }) => {
   });
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col my-auto animate-in fade-in zoom-in-95 duration-200">
-        {/* Modal Header (Hidden on print) */}
-        <div className="no-print bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
-            <h3 className="font-bold text-base">পেমেন্ট রসিদ ও ইনভয়েস</h3>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+      <div className="relative w-full max-w-xl bg-slate-950 rounded-3xl shadow-2xl border border-blue-900/60 overflow-hidden flex flex-col my-auto animate-in fade-in zoom-in-95 duration-200">
+        
+        {/* Modal Header with Blue & Black Gradient (Hidden on print) */}
+        <div className="no-print bg-linear-to-r from-black via-blue-950 to-black text-white px-5 py-4 flex items-center justify-between border-b border-blue-900/40">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm sm:text-base text-white">অফিসিয়াল পেমেন্ট রসিদ</h3>
+              <p className="text-[11px] text-blue-300/80">ProjuktiShikha BD Verified Invoice</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={handleDownloadFile}
-              className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+              onClick={handleDownloadImage}
+              className="px-3 py-1.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-blue-600/30 transition-all cursor-pointer border border-blue-400/30"
+              title="ছবি হিসেবে ডাউনলোড করুন"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>ডাউনলোড করুন</span>
+              <FileImage className="w-3.5 h-3.5" />
+              <span>ডাউনলোড (PNG)</span>
             </button>
             {onClose && (
               <button
@@ -94,18 +103,18 @@ export const ReceiptView: React.FC<ReceiptViewProps> = ({ order, onClose }) => {
         </div>
 
         {downloadSuccess && (
-          <div className="no-print bg-emerald-50 border-b border-emerald-200 px-5 py-2.5 text-xs text-emerald-800 font-bold flex items-center gap-2">
-            <Check className="w-4 h-4 text-emerald-600" />
+          <div className="no-print bg-blue-950/90 border-b border-blue-800 px-5 py-2.5 text-xs text-blue-200 font-bold flex items-center gap-2 animate-in fade-in">
+            <Check className="w-4 h-4 text-cyan-400" />
             <span>{downloadSuccess}</span>
           </div>
         )}
 
-        {/* Printable Area */}
+        {/* Printable White Receipt Area */}
         <div id="printable-receipt" className="p-6 sm:p-8 bg-white text-slate-900 relative">
           {/* Subtle Watermark Stamp for Verified Status */}
           {isVerified && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none opacity-10 rotate-[-18deg] border-8 border-emerald-600 rounded-3xl p-6 text-center">
-              <span className="text-5xl font-black tracking-widest text-emerald-700 uppercase">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none opacity-10 rotate-[-18deg] border-8 border-blue-600 rounded-3xl p-6 text-center">
+              <span className="text-5xl font-black tracking-widest text-blue-800 uppercase">
                 PAID & VERIFIED
               </span>
             </div>
@@ -114,89 +123,90 @@ export const ReceiptView: React.FC<ReceiptViewProps> = ({ order, onClose }) => {
           {/* Receipt Top Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-linear-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+              <div className="w-12 h-12 rounded-xl bg-linear-to-tr from-blue-900 via-blue-700 to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
                 PS
               </div>
               <div>
                 <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                  ProjuktiShikha BD
+                  Projukti<span className="text-blue-600">Shikha</span> BD
                 </h1>
                 <p className="text-xs text-slate-500 font-medium">
                   অনলাইন স্কিল ডেভেলপমেন্ট ও লার্নিং প্ল্যাটফর্ম
                 </p>
-                <p className="text-[11px] text-slate-400">Dhaka, Bangladesh | support@projuktishikha.com</p>
+                <p className="text-[10px] text-slate-400">ঢাকা, বাংলাদেশ • ভেরিফাইড ই-রসিদ</p>
               </div>
             </div>
 
-            <div className="text-left sm:text-right bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-xl">
-              <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase block">
-                অফিসিয়াল পেমেন্ট স্লিপ
+            <div className="text-left sm:text-right">
+              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                Official E-Receipt
               </span>
-              <span className="text-base font-mono font-bold text-emerald-700 block">
-                #{order.id}
-              </span>
-              <span className="text-xs text-slate-500 block mt-0.5">{formattedDate}</span>
+              <p className="text-base font-extrabold text-blue-700 font-mono">#{order.id}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{formattedDate}</p>
             </div>
           </div>
 
-          {/* Status Alert Banner */}
-          <div className="mt-5 mb-6">
+          {/* Verification Status Banner */}
+          <div className="mt-5">
             {isVerified ? (
-              <div className="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800">
-                <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wide">
-                    পেমেন্ট ভেরিফাইড (Payment Verified)
-                  </h4>
-                  <p className="text-xs text-emerald-700 mt-0.5">
-                    আপনার পেমেন্ট সফলভাবে নিশ্চিত করা হয়েছে। আপনার কোর্স ও রিসোর্সসমূহ আনলক হয়েছে।
-                  </p>
-                </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center gap-2.5 text-xs text-blue-800 font-bold">
+                <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>
+                  পেমেন্ট সফলভাবে ভেরিফাইড হয়েছে (Payment Verified)। আপনার কোর্সটি একটিভ!
+                </span>
               </div>
             ) : isRejected ? (
-              <div className="flex items-center gap-3 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800">
-                <XCircle className="w-5 h-5 text-red-600 shrink-0" />
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wide">পেমেন্ট রিজেক্টেড</h4>
-                  <p className="text-xs text-red-700 mt-0.5">
-                    {order.adminNote || 'প্রদত্ত TrxID যাচাই করা সম্ভব হয়নি। অনুগ্রহ করে সাপোর্টে যোগাযোগ করুন।'}
-                  </p>
-                </div>
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-2.5 text-xs text-red-800 font-bold">
+                <XCircle className="w-4 h-4 text-red-600 shrink-0" />
+                <span>
+                  পেমেন্ট বাতিল করা হয়েছে (Payment Rejected)। তথ্যে অমিল থাকলে সাপোর্টে যোগাযোগ করুন।
+                </span>
               </div>
             ) : (
-              <div className="flex items-center gap-3 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">
-                <Clock className="w-5 h-5 text-amber-600 shrink-0" />
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wide">ভেরিফিকেশন অপেক্ষমান (Pending)</h4>
-                  <p className="text-xs text-amber-700 mt-0.5">
-                    পেমেন্ট তথ্য সাবমিট করা হয়েছে। অ্যাডমিন প্যানেল থেকে দ্রুত যাচাই করা হবে।
-                  </p>
-                </div>
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-center gap-2.5 text-xs text-amber-800 font-bold">
+                <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>
+                  পেমেন্ট যাচাই প্রক্রিয়াধীন (Verification Pending)। শীঘ্রই TrxID কনফার্ম করা হবে।
+                </span>
               </div>
             )}
           </div>
 
-          {/* Customer & Transaction Info */}
-          <div className="grid grid-cols-2 gap-4 py-4 px-4 bg-slate-50 rounded-xl text-xs border border-slate-100">
+          {/* Admin Note if any */}
+          {order.adminNote && (
+            <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700">
+              <strong className="text-slate-900">অ্যাডমিন নোট:</strong> {order.adminNote}
+            </div>
+          )}
+
+          {/* Customer & Transaction Breakdown */}
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 rounded-xl p-4 border border-slate-100 text-xs">
             <div>
-              <p className="text-slate-400 font-medium">শিক্ষার্থী / গ্রাহকের নাম</p>
-              <p className="font-bold text-slate-800 mt-0.5 text-sm">{order.customerName}</p>
-              <p className="text-slate-500 font-mono mt-0.5">{order.customerPhone}</p>
-              {order.customerEmail && <p className="text-slate-500">{order.customerEmail}</p>}
+              <span className="text-slate-400 block font-semibold text-[10px] uppercase">
+                গ্রাহকের নাম ও ফোন
+              </span>
+              <p className="font-bold text-slate-800 text-sm mt-0.5">{order.customerName}</p>
+              <p className="text-slate-600 font-mono mt-0.5">{order.customerPhone}</p>
+              {order.customerEmail && (
+                <p className="text-slate-500 font-sans mt-0.5">{order.customerEmail}</p>
+              )}
             </div>
 
-            <div className="border-l border-slate-200 pl-4">
-              <p className="text-slate-400 font-medium">পেমেন্ট মেথড ও আইডি</p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className={`px-2 py-0.5 rounded text-[11px] font-bold text-white ${
-                  order.paymentMethod === 'bKash' ? 'bg-[#e2136e]' : 'bg-[#f7941d]'
-                }`}>
+            <div>
+              <span className="text-slate-400 block font-semibold text-[10px] uppercase">
+                পেমেন্ট মেথড ও Transaction ID
+              </span>
+              <p className="font-bold text-slate-800 text-sm mt-0.5 flex items-center gap-1.5">
+                <span
+                  className={
+                    order.paymentMethod === 'bKash' ? 'text-[#e2136e]' : 'text-[#f7941d]'
+                  }
+                >
                   {order.paymentMethod}
                 </span>
-                <span className="font-semibold text-slate-700">Send Money</span>
-              </div>
-              <p className="text-slate-400 font-medium mt-1">Transaction ID (TrxID)</p>
-              <p className="font-mono font-bold text-slate-900 bg-white px-2 py-1 rounded border border-slate-200 inline-block mt-0.5">
+                <span>Send Money</span>
+              </p>
+              <p className="font-mono bg-white px-2 py-0.5 rounded border border-slate-200 inline-block font-bold text-slate-800 mt-1">
                 {order.transactionId}
               </p>
             </div>
@@ -233,7 +243,7 @@ export const ReceiptView: React.FC<ReceiptViewProps> = ({ order, onClose }) => {
                   <td colSpan={2} className="py-2.5 px-4 text-right font-bold text-slate-700">
                     সর্বমোট পরিশোধিত (Total Paid):
                   </td>
-                  <td className="py-2.5 px-4 text-right font-extrabold text-emerald-700 text-base">
+                  <td className="py-2.5 px-4 text-right font-extrabold text-blue-700 text-base">
                     ৳{order.amount.toLocaleString('en-IN')}
                   </td>
                 </tr>
@@ -250,50 +260,52 @@ export const ReceiptView: React.FC<ReceiptViewProps> = ({ order, onClose }) => {
               <p>এই রসিদটি কম্পিউটার জেনারেটেড এবং কোনো শারীরিক স্বাক্ষরের প্রয়োজন নেই।</p>
             </div>
             <div className="flex items-center gap-1.5 text-slate-400">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+              <Sparkles className="w-3.5 h-3.5 text-blue-500" />
               <span>Verified E-Receipt • ProjuktiShikha BD</span>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons Footer (No Print) */}
-        <div className="no-print bg-slate-50 p-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2.5">
-          <span className="text-xs text-slate-500 hidden sm:inline">
-            Order: <strong className="font-mono text-slate-800">{order.id}</strong>
+        {/* Action Buttons Footer (No Print) with Blue & Black Gradient */}
+        <div className="no-print bg-linear-to-r from-black via-blue-950 to-black p-4 border-t border-blue-900/60 flex flex-wrap items-center justify-between gap-2.5">
+          <span className="text-xs text-slate-400 hidden sm:inline">
+            Order: <strong className="font-mono text-blue-300">{order.id}</strong>
           </span>
 
           <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-            {/* Download as HTML / Printable PDF */}
-            <button
-              onClick={handleDownloadFile}
-              className="flex-1 sm:flex-initial px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition-all"
-            >
-              <FileText className="w-4 h-4" />
-              <span>রসিদ ডাউনলোড (HTML/PDF)</span>
-            </button>
-
-            {/* Download as Image PNG */}
+            {/* Download as Image PNG (Most reliable for mobile & PC) */}
             <button
               onClick={handleDownloadImage}
-              className="flex-1 sm:flex-initial px-3.5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition-all"
+              className="flex-1 sm:flex-initial px-3.5 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-blue-600/30 cursor-pointer transition-all border border-blue-400/20"
+              title="গ্যালারি বা ডাউনলোডে ছবি হিসেবে সেভ করুন"
             >
               <FileImage className="w-4 h-4" />
-              <span>ছবি হিসেবে সেভ (PNG)</span>
+              <span>ছবি ডাউনলোড (PNG)</span>
             </button>
 
-            {/* Print Direct */}
+            {/* Print Direct / Save as PDF */}
             <button
               onClick={handlePrint}
-              className="p-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
-              title="প্রিন্ট করুন"
+              className="flex-1 sm:flex-initial px-3.5 py-2.5 bg-slate-900 hover:bg-slate-800 text-blue-200 border border-blue-800/60 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition-all"
+              title="প্রিন্ট করুন বা PDF হিসেবে সেভ করুন"
             >
-              <Printer className="w-4 h-4" />
+              <Printer className="w-4 h-4 text-blue-400" />
+              <span>প্রিন্ট / PDF সেভ</span>
+            </button>
+
+            {/* Download as HTML */}
+            <button
+              onClick={handleDownloadFile}
+              className="p-2.5 bg-blue-950/80 hover:bg-blue-900 text-blue-300 border border-blue-800/40 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
+              title="HTML ফাইল ডাউনলোড"
+            >
+              <Download className="w-4 h-4" />
             </button>
 
             {onClose && (
               <button
                 onClick={onClose}
-                className="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                className="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
               >
                 বন্ধ করুন
               </button>

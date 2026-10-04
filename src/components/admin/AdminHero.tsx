@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { HeroConfig } from '../../types/index.ts';
 import { ApiService } from '../../services/api.ts';
 import { ImageUploader } from '../common/ImageUploader.tsx';
-import { Save, Loader2, CheckCircle2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Save, Loader2, CheckCircle2, AlertCircle, Eye, EyeOff, Sliders } from 'lucide-react';
 
 interface AdminHeroProps {
   hero: HeroConfig;
@@ -54,12 +54,17 @@ export const AdminHero: React.FC<AdminHeroProps> = ({ hero, onRefresh }) => {
   };
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-4xl space-y-6 text-slate-100 font-sans">
       {/* Title */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-black via-blue-950 to-black p-5 sm:p-6 rounded-3xl border border-blue-900/60 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">হিরো সেকশন সেটিংস</h2>
-          <p className="text-xs text-slate-500">
+          <h2 className="text-xl font-black text-white flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-blue-600/20 text-cyan-300 border border-blue-500/30">
+              <Sliders className="w-5 h-5" />
+            </span>
+            <span>হিরো সেকশন সেটিংস</span>
+          </h2>
+          <p className="text-xs text-slate-400 mt-1">
             ওয়েবসাইটের প্রধান ব্যানার, হেডলাইন, বাটন ও বিজ্ঞাপনের লেখা সম্পূর্ণ নিয়ন্ত্রণ করুন
           </p>
         </div>
@@ -67,45 +72,47 @@ export const AdminHero: React.FC<AdminHeroProps> = ({ hero, onRefresh }) => {
         <button
           type="button"
           onClick={() => setIsVisible(!isVisible)}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
-            isVisible ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer border ${
+            isVisible
+              ? 'bg-blue-600/20 text-cyan-300 border-blue-500/30'
+              : 'bg-slate-800 text-slate-400 border-slate-700'
           }`}
         >
-          {isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+          {isVisible ? <Eye className="w-4 h-4 text-cyan-400" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
           <span>{isVisible ? 'সেকশন দৃশ্যমান (Visible)' : 'সেকশন লুকায়িত (Hidden)'}</span>
         </button>
       </div>
 
       {successMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+        <div className="p-4 bg-blue-950/80 border border-blue-500/50 rounded-2xl text-xs text-cyan-300 flex items-center gap-2 shadow-lg">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-cyan-400" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-800 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+        <div className="p-4 bg-red-950/80 border border-red-800 rounded-2xl text-xs text-red-300 flex items-center gap-2 shadow-lg">
+          <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
           <span>{errorMsg}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-5">
+      <form onSubmit={handleSubmit} className="bg-linear-to-b from-[#020617] via-[#040e29] to-[#020617] p-6 sm:p-8 rounded-3xl border border-blue-900/60 shadow-xl space-y-5">
         {/* Hero Image upload */}
-        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+        <div className="bg-[#02050f] p-4 rounded-2xl border border-blue-950">
           <ImageUploader
             label="হিরো ব্যানার ইমেজ (Hero Image Upload)"
             value={heroImage}
             onChange={setHeroImage}
             aspectRatio="banner"
-            hint="সরাসরি ফোন বা কম্পিউটার থেকে আধুনিক ব্যানার ছবি আপলোড করুন"
+            hint="সরাসরি ফোন বা কম্পিউটার থেকে যেকোনো সাইজের ব্যানার ছবি আপলোড করুন"
           />
         </div>
 
         {/* Badge & Offer Strip */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label className="block text-xs font-bold text-slate-300 mb-1">
               টপ ব্যাজ টেক্সট (Badge Text)
             </label>
             <input
@@ -113,114 +120,117 @@ export const AdminHero: React.FC<AdminHeroProps> = ({ hero, onRefresh }) => {
               value={badgeText}
               onChange={(e) => setBadgeText(e.target.value)}
               placeholder="যেমন: 🇧🇩 বাংলাদেশের বিশ্বস্ত অনলাইন লার্নিং প্ল্যাটফর্ম"
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              টপ অফার স্ট্রিপ লেখা (Top Notification Offer Text)
+            <label className="block text-xs font-bold text-slate-300 mb-1">
+              অফার ঘোষণা স্ট্রিপ (Top Offer Strip)
             </label>
             <input
               type="text"
               value={offerText}
               onChange={(e) => setOfferText(e.target.value)}
               placeholder="যেমন: 🎁 সীমিত সময়ের অফার: সকল কোর্সে ৫০% পর্যন্ত ছাড়!"
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
             />
           </div>
         </div>
 
-        {/* Main Heading */}
+        {/* Heading */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">
-            মূল শিরোনাম (Hero Main Heading) *
+          <label className="block text-xs font-bold text-slate-300 mb-1">
+            প্রধান শিরোনাম (Hero Heading)
           </label>
-          <textarea
-            rows={2}
+          <input
+            type="text"
             required
             value={heading}
             onChange={(e) => setHeading(e.target.value)}
-            className="w-full px-3 py-2 text-sm sm:text-base font-bold rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+            placeholder="দক্ষতা অর্জন করুন, ফ্রিল্যান্সিং ও স্মার্ট ক্যারিয়ারে এগিয়ে থাকুন"
+            className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white font-medium"
           />
         </div>
 
         {/* Subtitle */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">
-            উপ-শিরোনাম / বিবরণ (Subtitle / Description)
+          <label className="block text-xs font-bold text-slate-300 mb-1">
+            উপ-শিরোনাম / বিবরণ (Subtitle)
           </label>
           <textarea
             rows={3}
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
-            className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+            placeholder="বাংলাদেশের শীর্ষ মেন্টরদের সাথে সরাসরি প্রজেক্টভিত্তিক লার্নিং..."
+            className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
           />
         </div>
 
-        {/* CTA Button Text & Action */}
+        {/* Button Text & Link */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              বাটন টেক্সট (Button Text)
+            <label className="block text-xs font-bold text-slate-300 mb-1">
+              কল-টু-অ্যাকশন বাটন লেখা (CTA Button Text)
             </label>
             <input
               type="text"
               value={buttonText}
               onChange={(e) => setButtonText(e.target.value)}
-              placeholder="যেমন: কোর্সগুলো এক্সপ্লোর করুন"
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+              placeholder="কোর্সগুলো এক্সপ্লোর করুন"
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              বাটন লিঙ্ক / অ্যাকশন (Button Link/Anchor)
+            <label className="block text-xs font-bold text-slate-300 mb-1">
+              বাটন লিঙ্ক (Button Link)
             </label>
             <input
               type="text"
               value={buttonLink}
               onChange={(e) => setButtonLink(e.target.value)}
               placeholder="#products-section"
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white font-mono"
             />
           </div>
         </div>
 
-        {/* Support Numbers */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+        {/* Support Phone & WhatsApp */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-blue-950">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              হেল্পলাইন মোবাইল নম্বর
+            <label className="block text-xs font-bold text-slate-300 mb-1">
+              হেল্পলাইন ফোন নম্বর (Support Phone)
             </label>
             <input
               type="text"
               value={supportPhone}
               onChange={(e) => setSupportPhone(e.target.value)}
               placeholder="01890-000000"
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white font-mono"
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              হোয়াটসঅ্যাপ নম্বর (কান্ট্রি কোড সহ)
+            <label className="block text-xs font-bold text-slate-300 mb-1">
+              হোয়াটসঅ্যাপ নম্বর (WhatsApp Number with country code)
             </label>
             <input
               type="text"
               value={supportWhatsApp}
               onChange={(e) => setSupportWhatsApp(e.target.value)}
               placeholder="8801890000000"
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white font-mono"
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white font-mono"
             />
           </div>
         </div>
 
-        <div className="pt-4 border-t border-slate-200 flex justify-end">
+        {/* Submit */}
+        <div className="pt-4 border-t border-blue-950 flex justify-end">
           <button
             type="submit"
             disabled={isSaving}
-            className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer disabled:opacity-50"
+            className="px-6 py-2.5 bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-blue-600/30 cursor-pointer disabled:opacity-50 border border-blue-400/30"
           >
             {isSaving ? (
               <>
@@ -230,7 +240,7 @@ export const AdminHero: React.FC<AdminHeroProps> = ({ hero, onRefresh }) => {
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                <span>হিরো সেটিংস সেভ করুন</span>
+                <span>পরিবর্তন সংরক্ষণ করুন</span>
               </>
             )}
           </button>

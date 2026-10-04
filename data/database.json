@@ -2,9 +2,9 @@
   "admin": {
     "id": "admin-master",
     "email": "iqrasahadath590@gmail.com",
-    "passwordHash": "848ba55c31c42c583c20b402cef259a2b47ad4655c221d165a2d0ffd503db5137432b76765e937a73adec760fe944a92d709aecc5314094f8db7fbacd7dfbd50",
-    "passwordSalt": "30a0d517e82fcc2aea738b101cad16ec",
-    "updatedAt": "2026-10-04T17:13:00.000Z"
+    "passwordHash": "8bf34ec813b2c9db66b36210f6842c69cfeef9ada5f9d3cc347e09688e91310f2c010c41ac38903236a245c1e484cbdd69e4ff96084e3d699278dd5f958dca7e",
+    "passwordSalt": "30187437dd10e86b55591e65e586b0a6",
+    "updatedAt": "2026-10-04T18:46:20.926Z"
   },
   "hero": {
     "heading": "দক্ষতা অর্জন করুন, ফ্রিল্যান্সিং ও স্মার্ট ক্যারিয়ারে এগিয়ে থাকুন",
@@ -33,145 +33,6 @@
     }
   },
   "products": [
-    {
-      "id": "prod-mern-stack",
-      "name": "কমপ্লিট ফুল-স্ট্যাক ওয়েব ডেভেলপমেন্ট (MERN & Next.js)",
-      "shortDescription": "শূন্য থেকে শুরু করে আধুনিক ফুল-স্ট্যাক প্রজেক্ট তৈরি ও জব রেডি পোর্টফোলিও গড়ার সম্পূর্ণ গাইড।",
-      "fullDescription": "এই কোর্সে আপনি শিখবেন HTML5, CSS3, Tailwind CSS, JavaScript (ES6+), React 19, Node.js, Express, MongoDB এবং Next.js। বাস্তব জীবনের ১০টি লাইভ প্রজেক্ট ডেভেলপমেন্ট, গিটহাব কলাবরেশন এবং রিমোট জবের জন্য রিজুমে প্রিপারেশন।",
-      "currentPrice": 4500,
-      "previousPrice": 8000,
-      "discountPercentage": 44,
-      "category": "Web Development",
-      "thumbnail": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
-      "images": [
-        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80"
-      ],
-      "status": "published",
-      "isFeatured": true,
-      "offerBadge": "🔥 হট ডিল - ৪৪% ছাড়",
-      "courseDuration": "১২ সপ্তাহ (৩৬টি লাইভ ক্লাস)",
-      "courseLevel": "Beginner",
-      "whatYouWillLearn": [
-        "আধুনিক React এবং Next.js এর সম্পূর্ণ ফান্ডামেন্টাল ও অ্যাডভান্সড কনসেপ্ট",
-        "Node.js & Express দিয়ে RESTful API এবং অথেনটিকেশন সিস্টেম তৈরি",
-        "MongoDB ও Mongoose দিয়ে ডেটাবেস ডিজাইন ও রিয়েলটাইম কুয়েরি",
-        "১০+ ইন্ডাস্ট্রি গ্রেড লাইভ প্রজেক্ট তৈরি ও ক্লাউড ডেপ্লয়মেন্ট",
-        "ফ্রিল্যান্সিং মার্কেটপ্লেস ও ইন্টারন্যাশনাল রিমোট জবে ইন্টারভিউ প্রস্তুতি"
-      ],
-      "features": [
-        "লাইফটাইম কোর্স এক্সেস",
-        "কোর্স কমপ্লিশন ভেরিফাইড সার্টিফিকেট",
-        "২৪/৭ ডেডিকেটেড ডিসকর্ড সাপোর্ট গ্রুপ",
-        "প্রতিটি ক্লাসের প্রজেক্ট সোর্স কোড ও নোটস",
-        "সরাসরি মেন্টরশিপ ও রেজুমে রিভিউ"
-      ],
-      "orderIndex": 0,
-      "createdAt": "2026-10-04T17:06:24.391Z",
-      "updatedAt": "2026-10-04T17:06:24.391Z"
-    },
-    {
-      "id": "prod-spoken-ielts",
-      "name": "স্পোকেন ইংলিশ ও আইইএলটিএস মাস্টারক্লাস (Band 7+)",
-      "shortDescription": "আন্তর্জাতিক মানের ফ্লুয়েন্সি ও IELTS পরীক্ষায় কাঙ্ক্ষিত ৭+ ব্যান্ড অর্জনের প্রিমিয়াম কোর্স।",
-      "fullDescription": "ইংরেজি বলায় জড়তা কাটানো, ব্রিটিশ ও আমেরিকান এক্সেন্ট, প্রতিদিনের কনভার্সেশন প্র্যাকটিস এবং IELTS এর ৪টি মডিউল (Listening, Reading, Writing, Speaking) এর জন্য বিশেষ কৌশল ও মক টেস্ট।",
-      "currentPrice": 2800,
-      "previousPrice": 5000,
-      "discountPercentage": 44,
-      "category": "Language & IELTS",
-      "thumbnail": "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=800&q=80",
-      "images": [
-        "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=800&q=80"
-      ],
-      "status": "published",
-      "isFeatured": true,
-      "offerBadge": "বেস্ট সেলার",
-      "courseDuration": "৮ সপ্তাহ (২৪টি ইন্টারেক্টিভ ক্লাস)",
-      "courseLevel": "All Levels",
-      "whatYouWillLearn": [
-        "সাবলীলভাবে কোনো প্রকার জড়তা ছাড়া ইংরেজিতে কথা বলা",
-        "আইইএলটিএস স্পিকিং ও রাইটিংয়ে উচ্চ ব্যান্ড স্কোর নিশ্চিতের গোপন টেকনিক",
-        "প্রফেশনাল ইমেইল ও প্রেজেন্টেশন স্কিলস ডেভেলপমেন্ট",
-        "লিসেনিং ও রিডিং স্পিড বাড়ানোর কার্যকরী অনুশীলন"
-      ],
-      "features": [
-        "১-অন-১ লাইভ স্পিকিং প্র্যাকটিস সেশন",
-        "১০টি ফুল-লেংথ IELTS মক টেস্ট",
-        "পিডিএফ প্র্যাকটিস শিট ও অডিও লেকচার",
-        "ভেরিফাইড কোর্স সার্টিফিকেট"
-      ],
-      "orderIndex": 1,
-      "createdAt": "2026-10-04T17:06:24.391Z",
-      "updatedAt": "2026-10-04T17:06:24.391Z"
-    },
-    {
-      "id": "prod-uiux-figma",
-      "name": "প্রফেশনাল UI/UX ডিজাইন উইথ ফিগমা (Figma Masterclass)",
-      "shortDescription": "মোবাইল অ্যাপ ও ওয়েবসাইট ইন্টারফেস ডিজাইনে ক্যারিয়ার গড়ে তুলুন আন্তর্জাতিক মানের পোর্টফোলিওসহ।",
-      "fullDescription": "ইউজার রিসার্চ, ওয়্যারফ্রেম, ইনফরমেশন আর্কিটেকচার, ইন্টারেক্টিভ প্রোটোটাইপিং, ডিজাইন সিস্টেম এবং ফিগমার সব অ্যাডভান্সড ফিচার ও প্লাগিনের প্র্যাকটিক্যাল ব্যবহার শিখুন।",
-      "currentPrice": 3200,
-      "previousPrice": 6000,
-      "discountPercentage": 47,
-      "category": "Design & Creative",
-      "thumbnail": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=800&q=80",
-      "images": [
-        "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=800&q=80"
-      ],
-      "status": "published",
-      "isFeatured": true,
-      "offerBadge": "জনপ্রিয় কোর্স",
-      "courseDuration": "১০ সপ্তাহ (৩০টি ক্লাস)",
-      "courseLevel": "Beginner",
-      "whatYouWillLearn": [
-        "ডিজাইন প্রিন্সিপালস, কালার থিওরি ও টাইপোগ্রাফি",
-        "Figma Auto Layout, Components & Design Tokens",
-        "অ্যাডভান্সড প্রোটোটাইপিং ও মাইক্রো-অ্যানিমেশন",
-        "Behance & Dribbble পোর্টফোলিও শোকেসিং কৌশল"
-      ],
-      "features": [
-        "প্রিমিয়াম ফিগমা UI কিট ও রিসোর্স ফ্রি",
-        "৩টি সম্পূর্ণ রিয়েল-ওয়ার্ল্ড অ্যাপ কেস স্টাডি",
-        "ইন্ডাস্ট্রি স্ট্যান্ডার্ড সার্টিফিকেট",
-        "লাইভ রিভিউ ও ফিডব্যাক"
-      ],
-      "orderIndex": 2,
-      "createdAt": "2026-10-04T17:06:24.391Z",
-      "updatedAt": "2026-10-04T17:06:24.391Z"
-    },
-    {
-      "id": "prod-freelance-upwork",
-      "name": "আপওয়ার্ক ও ফাইভার ফ্রিল্যান্সিং গাইডলাইন ২০২৬",
-      "shortDescription": "সঠিক নিয়মে অ্যাকাউন্ট খোলা, বিডিং কৌশল এবং বিদেশি ক্লায়েন্ট হ্যান্ডলিংয়ের নিশ্চিত পদ্ধতি।",
-      "fullDescription": "ফ্রিল্যান্সিংয়ে সবচেয়ে কঠিন অংশ হচ্ছে প্রথম কাজ পাওয়া এবং কাজের মূল্য বাড়ানো। এই মাস্টারকোর্সে রয়েছে কভার লেটার লেখার সিক্রেট ফর্মুলা, আপওয়ার্ক প্রজেক্ট ক্যাটালগ অপটিমাইজেশন, ক্লায়েন্ট কমিউনিকেশন ও পেমেন্ট উইথড্রয়াল প্রসেস।",
-      "currentPrice": 1990,
-      "previousPrice": 4000,
-      "discountPercentage": 50,
-      "category": "Freelancing",
-      "thumbnail": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80",
-      "images": [
-        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80"
-      ],
-      "status": "published",
-      "isFeatured": false,
-      "offerBadge": "৫০% ডিসকাউন্ট",
-      "courseDuration": "৬ সপ্তাহ (১৮টি ক্লাস)",
-      "courseLevel": "Intermediate",
-      "whatYouWillLearn": [
-        "১০০% এপ্রুভড Upwork & Fiverr প্রোফাইল সেটআপ",
-        "উইনিং প্রপোজাল / কভার লেটার লেখার সঠিক টেমপ্লেট",
-        "ক্লায়েন্টের সাথে ভিডিও/অডিও ইন্টারভিউ ফেস করার কৌশল",
-        "Payoneer ও লোকাল ব্যাংক ট্রান্সফারের নিরাপদ উপায়"
-      ],
-      "features": [
-        "প্রুভেন কভার লেটার টেমপ্লেট প্যাক",
-        "লাইভ বিডিং ড্রিলস ও রিভিউ",
-        "আজীবন সিক্রেট নেটওয়ার্কিং কমিউনিটি",
-        "সার্টিফিকেট অব অ্যাচিভমেন্ট"
-      ],
-      "orderIndex": 3,
-      "createdAt": "2026-10-04T17:06:24.391Z",
-      "updatedAt": "2026-10-04T17:06:24.391Z"
-    },
     {
       "name": "টাকা বানানোর মেশিন",
       "shortDescription": "",

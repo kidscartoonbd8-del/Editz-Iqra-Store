@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Upload, X, RefreshCw, Image as ImageIcon, Loader2 } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
+import { Upload, X, RefreshCw, Image as ImageIcon, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
 import { optimizeImage } from '../../services/imageOptimizer.ts';
 import { ApiService } from '../../services/api.ts';
 
@@ -7,7 +7,7 @@ interface ImageUploaderProps {
   label: string;
   value: string;
   onChange: (url: string) => void;
-  aspectRatio?: 'square' | 'video' | 'banner';
+  aspectRatio?: 'square' | 'video' | 'banner' | 'auto';
   hint?: string;
 }
 
@@ -15,19 +15,25 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   label,
   value,
   onChange,
-  aspectRatio = 'video',
-  hint = 'গ্যালারি বা ফাইল থেকে ছবি সিলেক্ট করুন (Android ও PC সাপোর্টেড)'
+  aspectRatio = 'auto',
+  hint = 'যেকোনো সাইজের ছবি (Portrait, Landscape বা Banner) আপলোড করুন — আসল সাইজ বজায় থাকবে'
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
 
-  const aspectClass =
-    aspectRatio === 'square'
-      ? 'aspect-square'
-      : aspectRatio === 'banner'
-      ? 'aspect-21/9'
-      : 'aspect-16/9';
+  useEffect(() => {
+    if (value) {
+      const img = new Image();
+      img.onload = () => {
+        setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+      img.src = value;
+    } else {
+      setDimensions(null);
+    }
+  }, [value]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -37,10 +43,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     setIsProcessing(true);
 
     try {
-      // 1. Client-side canvas compression for mobile gallery / camera photos
-      const optimizedDataUrl = await optimizeImage(file, 1600, 1600, 0.85);
+      // Retain natural aspect ratio and resolution
+      const optimizedDataUrl = await optimizeImage(file, 2600, 2600, 0.90);
 
-      // 2. Upload to server persistent storage
+      // Upload to server persistent storage
       const uploadedUrl = await ApiService.adminUploadImage(optimizedDataUrl, file.name);
       onChange(uploadedUrl);
     } catch (err: any) {
@@ -57,11 +63,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
     onChange('');
+    setDimensions(null);
   };
 
   return (
     <div className="space-y-1.5">
-      <label className="block text-sm font-semibold text-slate-700">{label}</label>
+      <div className="flex items-center justify-between">
+        <label className="block text-xs font-bold text-slate-200">{label}</label>
+        {dimensions && (
+          <span className="text-[10px] font-mono font-bold bg-blue-950/80 text-blue-300 border border-blue-800/50 px-2 py-0.5 rounded-full flex items-center gap-1">
+            <Sparkles className="w-2.5 h-2.5 text-cyan-400" />
+            <span>আসল সাইজ: {dimensions.width} × {dimensions.height} px</span>
+          </span>
+        )}
+      </div>
 
       {/* Hidden file input */}
       <input
@@ -73,20 +88,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       />
 
       {value ? (
-        <div className="relative group w-full min-h-[160px] max-h-[380px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100/80 shadow-xs flex items-center justify-center p-2">
+        <div className="relative group w-full min-h-[160px] max-h-[420px] rounded-2xl overflow-hidden border border-blue-900/60 bg-linear-to-b from-[#020617] via-[#040d24] to-[#020617] shadow-lg flex items-center justify-center p-3">
           <img
             src={value}
             alt="Preview"
-            className="max-h-[360px] w-auto max-w-full object-contain rounded-xl transition-transform duration-300 group-hover:scale-101"
+            className="max-h-[390px] w-auto max-w-full object-contain rounded-xl transition-transform duration-300 group-hover:scale-101"
           />
 
           {/* Action Overlay */}
-          <div className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+          <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-xs">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isProcessing}
-              className="px-3 py-1.5 bg-white text-slate-800 rounded-lg text-xs font-semibold shadow-md flex items-center gap-1.5 hover:bg-slate-50 transition-colors cursor-pointer"
+              className="px-3.5 py-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-600/30 flex items-center gap-1.5 transition-all cursor-pointer border border-blue-400/30"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               ছবি পরিবর্তন
@@ -95,7 +110,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               type="button"
               onClick={handleRemove}
               disabled={isProcessing}
-              className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-semibold shadow-md flex items-center gap-1.5 hover:bg-red-700 transition-colors cursor-pointer"
+              className="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-lg flex items-center gap-1.5 transition-colors cursor-pointer border border-red-400/30"
             >
               <X className="w-3.5 h-3.5" />
               মুছে ফেলুন
@@ -107,53 +122,61 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-1.5 bg-white/90 text-slate-800 rounded-lg text-xs shadow-xs"
+              className="p-1.5 bg-blue-600 text-white rounded-lg text-xs shadow-md border border-blue-400/30"
+              title="পরিবর্তন করুন"
             >
               <RefreshCw className="w-3.5 h-3.5" />
             </button>
             <button
               type="button"
               onClick={handleRemove}
-              className="p-1.5 bg-red-600/90 text-white rounded-lg text-xs shadow-xs"
+              className="p-1.5 bg-red-600 text-white rounded-lg text-xs shadow-md border border-red-400/30"
+              title="মুছে ফেলুন"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {isProcessing && (
-            <div className="absolute inset-0 bg-slate-900/70 flex flex-col items-center justify-center text-white text-xs gap-2">
-              <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
-              <span>ছবি অপটিমাইজ ও আপলোড হচ্ছে...</span>
+            <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center text-white text-xs gap-2 backdrop-blur-xs">
+              <Loader2 className="w-7 h-7 animate-spin text-blue-400" />
+              <span className="font-semibold">ছবি অপটিমাইজ ও আপলোড হচ্ছে...</span>
             </div>
           )}
         </div>
       ) : (
         <div
           onClick={() => !isProcessing && fileInputRef.current?.click()}
-          className={`w-full ${aspectClass} border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl bg-slate-50/70 hover:bg-emerald-50/30 flex flex-col items-center justify-center p-4 cursor-pointer transition-colors text-center group`}
+          className="w-full min-h-[140px] border-2 border-dashed border-blue-900/70 hover:border-blue-500 rounded-2xl bg-linear-to-b from-[#020617] via-[#040e26] to-[#020617] hover:bg-blue-950/30 flex flex-col items-center justify-center p-5 cursor-pointer transition-all text-center group shadow-inner"
         >
           {isProcessing ? (
-            <div className="flex flex-col items-center gap-2 text-slate-600">
-              <Loader2 className="w-7 h-7 animate-spin text-emerald-600" />
-              <span className="text-xs font-medium">ছবি আপলোড হচ্ছে...</span>
+            <div className="flex flex-col items-center gap-2 text-slate-300">
+              <Loader2 className="w-7 h-7 animate-spin text-blue-400" />
+              <span className="text-xs font-bold">ছবি আপলোড হচ্ছে...</span>
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-2 text-slate-500 group-hover:text-emerald-700 transition-colors">
-              <div className="w-10 h-10 rounded-full bg-white shadow-xs border border-slate-200 flex items-center justify-center group-hover:border-emerald-300 group-hover:bg-emerald-50">
-                <Upload className="w-5 h-5 text-slate-600 group-hover:text-emerald-600" />
+            <div className="space-y-2">
+              <div className="w-12 h-12 rounded-2xl bg-blue-600/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto group-hover:scale-110 group-hover:bg-blue-600/20 transition-all shadow-md">
+                <Upload className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-slate-700 group-hover:text-emerald-800">
-                  ডিভাইস / গ্যালারি থেকে ছবি আপলোড করুন
+                <p className="text-xs font-bold text-slate-200">
+                  ক্লিক করে ছবি আপলোড করুন
                 </p>
-                <p className="text-[11px] text-slate-400 mt-0.5">{hint}</p>
+                <p className="text-[11px] text-slate-400 mt-1 max-w-sm">
+                  {hint}
+                </p>
               </div>
             </div>
           )}
         </div>
       )}
 
-      {error && <p className="text-xs text-red-600 font-medium">{error}</p>}
+      {error && (
+        <p className="text-xs text-red-400 font-semibold bg-red-950/40 p-2 rounded-xl border border-red-900/50">
+          ⚠️ {error}
+        </p>
+      )}
     </div>
   );
 };

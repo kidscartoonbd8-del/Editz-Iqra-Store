@@ -61,118 +61,129 @@ export const AdminSecurity: React.FC<AdminSecurityProps> = ({ currentEmail, onRe
       setConfirmPassword('');
       onRefresh();
     } catch (err: any) {
-      setErrorMsg(err.message);
+      setErrorMsg(err.message || 'ক্রেডেনশিয়ালস আপডেট করতে সমস্যা হয়েছে।');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <h2 className="text-xl font-bold text-slate-900">এডমিন সিকিউরিটি ও পাসওয়ার্ড</h2>
-        <p className="text-xs text-slate-500">
-          আপনার অ্যাডমিন লগইন ইমেইল এবং সিক্রেট পাসওয়ার্ড পরিবর্তন করুন
+    <div className="max-w-2xl space-y-6 text-slate-100 font-sans">
+      {/* Title */}
+      <div className="bg-linear-to-r from-black via-blue-950 to-black p-5 sm:p-6 rounded-3xl border border-blue-900/60 shadow-xl">
+        <h2 className="text-xl font-black text-white flex items-center gap-2.5">
+          <span className="p-2 rounded-xl bg-blue-600/20 text-cyan-300 border border-blue-500/30">
+            <Shield className="w-5 h-5" />
+          </span>
+          <span>এডমিন সিকিউরিটি ও পাসওয়ার্ড পরিবর্তন</span>
+        </h2>
+        <p className="text-xs text-slate-400 mt-1">
+          অ্যাডমিন প্যানেলে লগইন করার ইমেইল ও পাসওয়ার্ড নিরাপদে পরিবর্তন ও আপডেট করুন
         </p>
       </div>
 
       {successMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+        <div className="p-4 bg-blue-950/80 border border-blue-500/50 rounded-2xl text-xs text-cyan-300 flex items-center gap-2 shadow-lg">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-cyan-400" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-800 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+        <div className="p-4 bg-red-950/80 border border-red-800 rounded-2xl text-xs text-red-300 flex items-center gap-2 shadow-lg">
+          <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
           <span>{errorMsg}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+      <form onSubmit={handleSubmit} className="bg-linear-to-b from-[#020617] via-[#040e29] to-[#020617] p-6 sm:p-8 rounded-3xl border border-blue-900/60 shadow-xl space-y-5">
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">
-            অ্যাডমিন লগইন ইমেইল
+          <label className="block text-xs font-bold text-slate-300 mb-1">
+            অ্যাডমিন ইমেইল (Login Email)
           </label>
           <div className="relative">
-            <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+              placeholder="iqrasahadath590@gmail.com"
+              className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
             />
           </div>
         </div>
 
-        <div className="pt-2 border-t border-slate-100">
-          <label className="block text-xs font-bold text-slate-700 mb-1">
-            বর্তমান পাসওয়ার্ড (Current Password) *
+        <div className="pt-2 border-t border-blue-950">
+          <label className="block text-xs font-bold text-slate-300 mb-1">
+            বর্তমান পাসওয়ার্ড (Current Password) <span className="text-red-400">*</span>
           </label>
           <div className="relative">
-            <Key className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
             <input
               type="password"
               required
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="বর্তমান পাসওয়ার্ড দিন"
-              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+              placeholder="বর্তমান পাসওয়ার্ড লিখুন (@qwe৪*h)"
+              className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
             />
           </div>
+          <span className="text-[10px] text-slate-500 mt-1 block">
+            নিরাপত্তা নিশ্চিত করতে বর্তমান পাসওয়ার্ড ভেরিফাই করা হবে।
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="pt-2 border-t border-blue-950 space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              নতুন পাসওয়ার্ড (ঐচ্ছিক)
+            <label className="block text-xs font-bold text-slate-300 mb-1">
+              নতুন পাসওয়ার্ড (ঐচ্ছিক - পরিবর্তন করতে চাইলে লিখুন)
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="কমপক্ষে ৬ অক্ষর"
-                className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)"
+                className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              নতুন পাসওয়ার্ড নিশ্চিত করুন
-            </label>
-            <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="আবার লিখুন"
-                className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
-              />
+          {newPassword && (
+            <div>
+              <label className="block text-xs font-bold text-slate-300 mb-1">
+                নতুন পাসওয়ার্ড নিশ্চিত করুন (Confirm Password)
+              </label>
+              <div className="relative">
+                <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="নতুন পাসওয়ার্ডটি আবার লিখুন"
+                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-slate-500">
-          <p className="font-semibold text-slate-700">সিকিউরিটি গ্যারান্টি:</p>
-          <p>
-            সার্ভারে পাসওয়ার্ড কখনো প্লেইন টেক্সট হিসেবে সংরক্ষিত থাকে না। এটি ক্রিপ্টোগ্রাফিক PBKDF2 সল্ট সহ হ্যাশ করে রাখা হয় এবং সকল এডমিন এপিআই রুট টোকেন দ্বারা সুরক্ষিত।
-          </p>
-        </div>
-
-        <div className="pt-2 flex justify-end">
+        <div className="pt-4 border-t border-blue-950 flex justify-end">
           <button
             type="submit"
             disabled={isLoading}
-            className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+            className="px-6 py-2.5 bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-blue-600/30 cursor-pointer disabled:opacity-50 border border-blue-400/30"
           >
-            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-            <span>সিকিউরিটি আপডেট করুন</span>
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>আপডেট হচ্ছে...</span>
+              </>
+            ) : (
+              <span>ক্রেডেনশিয়ালস সংরক্ষণ করুন</span>
+            )}
           </button>
         </div>
       </form>

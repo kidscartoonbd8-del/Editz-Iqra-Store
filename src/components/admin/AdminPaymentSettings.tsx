@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PaymentSettings } from '../../types/index.ts';
 import { ApiService } from '../../services/api.ts';
-import { Save, Loader2, CheckCircle2, AlertCircle, Phone, FileText } from 'lucide-react';
+import { Save, Loader2, CheckCircle2, AlertCircle, Phone, FileText, CreditCard } from 'lucide-react';
 
 interface AdminPaymentSettingsProps {
   paymentSettings: PaymentSettings;
@@ -49,7 +49,7 @@ export const AdminPaymentSettings: React.FC<AdminPaymentSettingsProps> = ({
           instructions: nagadInstructions.trim()
         }
       });
-      setSuccessMsg('পেমেন্ট সেটিংস সফলভাবে আপডেট হয়েছে! ওয়েবসাইটে পরিবর্তন লাইভ হয়েছে।');
+      setSuccessMsg('পেমেন্ট সেটিংস সফলভাবে আপডেট হয়েছে! গ্রাহকরা নতুন তথ্য দেখতে পাবেন।');
       onRefresh();
     } catch (err: any) {
       setErrorMsg(err.message || 'সেটিংস আপডেট ব্যর্থ হয়েছে।');
@@ -59,40 +59,47 @@ export const AdminPaymentSettings: React.FC<AdminPaymentSettingsProps> = ({
   };
 
   return (
-    <div className="max-w-4xl space-y-6">
-      {/* Title */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <h2 className="text-xl font-bold text-slate-900">বাংলাদেশি পেমেন্ট গেটওয়ে সেটিংস</h2>
-        <p className="text-xs text-slate-500">
-          বিকাশ (bKash) ও নগদ (Nagad) এর পার্সোনাল/মার্চেন্ট নম্বর ও নির্দেশনাবলি কনফিগার করুন
-        </p>
+    <div className="max-w-4xl space-y-6 text-slate-100 font-sans">
+      {/* Title Header */}
+      <div className="bg-linear-to-r from-black via-blue-950 to-black p-5 sm:p-6 rounded-3xl border border-blue-900/60 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-black text-white flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-blue-600/20 text-cyan-300 border border-blue-500/30">
+              <CreditCard className="w-5 h-5" />
+            </span>
+            <span>পেমেন্ট গেটওয়ে ও অ্যাকাউন্ট সেটিংস</span>
+          </h2>
+          <p className="text-xs text-slate-400 mt-1">
+            বিকাশ ও নগদ নম্বর, ব্যক্তিগত/মার্চেন্ট ধরন এবং পেমেন্ট নির্দেশিকা পরিচালনা করুন
+          </p>
+        </div>
       </div>
 
       {successMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+        <div className="p-4 bg-blue-950/80 border border-blue-500/50 rounded-2xl text-xs text-cyan-300 flex items-center gap-2 shadow-lg">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-cyan-400" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-800 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+        <div className="p-4 bg-red-950/80 border border-red-800 rounded-2xl text-xs text-red-300 flex items-center gap-2 shadow-lg">
+          <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* bKash Settings Card */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#e2136e] text-white font-black text-xs flex items-center justify-center">
-                bK
+        <div className="bg-linear-to-b from-[#020617] via-[#040e29] to-[#020617] p-6 sm:p-7 rounded-3xl border border-blue-900/60 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-blue-950 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#e2136e]/20 border border-[#e2136e]/40 flex items-center justify-center font-bold text-[#e2136e] text-sm">
+                bKash
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-slate-900">bKash (বিকাশ) কনফিগারেশন</h3>
-                <p className="text-[11px] text-slate-400">গ্রাহকদের জন্য বিকাশ পেমেন্ট তথ্য</p>
+                <h3 className="font-extrabold text-base text-white">বিকাশ পেমেন্ট কনফিগারেশন</h3>
+                <p className="text-xs text-slate-400">বিকাশ সেন্ড মানি বা মার্চেন্ট পেমেন্ট সেটিংস</p>
               </div>
             </div>
 
@@ -103,68 +110,68 @@ export const AdminPaymentSettings: React.FC<AdminPaymentSettingsProps> = ({
                 onChange={(e) => setBkashEnabled(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#e2136e]"></div>
-              <span className="ml-2 text-xs font-bold text-slate-700">
-                {bkashEnabled ? 'সক্রিয় (Active)' : 'নিষ্ক্রিয়'}
+              <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#e2136e]"></div>
+              <span className="ml-2 text-xs font-bold text-slate-300">
+                {bkashEnabled ? 'সক্রিয়' : 'নিষ্ক্রিয়'}
               </span>
             </label>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                বিকাশ নম্বর (Payment / Send Money Number) *
+              <label className="block text-xs font-bold text-slate-300 mb-1">
+                বিকাশ অ্যাকাউন্ট নম্বর
               </label>
               <input
                 type="text"
-                required
+                required={bkashEnabled}
                 value={bkashNumber}
                 onChange={(e) => setBkashNumber(e.target.value)}
-                placeholder="017XXXXXXXX"
-                className="w-full px-3 py-2 text-sm font-mono font-bold rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#e2136e] bg-white"
+                placeholder="যেমন: 01712-345678"
+                className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white font-mono"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                অ্যাকাউন্টের ধরন
+              <label className="block text-xs font-bold text-slate-300 mb-1">
+                অ্যাকাউন্ট টাইপ (Account Type)
               </label>
               <select
                 value={bkashType}
                 onChange={(e) => setBkashType(e.target.value as any)}
-                className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#e2136e] bg-white"
+                className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white font-medium"
               >
-                <option value="personal">Personal (সেন্ড মানি করতে হবে)</option>
-                <option value="merchant">Merchant (পেমেন্ট করতে হবে)</option>
+                <option value="personal">Personal (সেন্ড মানি)</option>
+                <option value="merchant">Merchant (পেমেন্ট)</option>
                 <option value="agent">Agent (ক্যাশ ইন)</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              পেমেন্ট নির্দেশনাবলি (Payment Instructions for Customer)
+            <label className="block text-xs font-bold text-slate-300 mb-1">
+              বিকাশ পেমেন্ট নির্দেশিকা (Instructions for Student)
             </label>
             <textarea
-              rows={3}
+              rows={4}
               value={bkashInstructions}
               onChange={(e) => setBkashInstructions(e.target.value)}
-              placeholder="ধাপ ১: বিকাশ অ্যাপে যান...\nধাপ ২: সেন্ড মানি করুন..."
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#e2136e] bg-white"
+              placeholder="পেমেন্ট করার ধাপগুলো লিখুন..."
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
             />
           </div>
         </div>
 
         {/* Nagad Settings Card */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#f7941d] text-white font-black text-xs flex items-center justify-center">
-                NG
+        <div className="bg-linear-to-b from-[#020617] via-[#040e29] to-[#020617] p-6 sm:p-7 rounded-3xl border border-blue-900/60 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-blue-950 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#f7941d]/20 border border-[#f7941d]/40 flex items-center justify-center font-bold text-[#f7941d] text-sm">
+                Nagad
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-slate-900">Nagad (নগদ) কনফিগারেশন</h3>
-                <p className="text-[11px] text-slate-400">গ্রাহকদের জন্য নগদ পেমেন্ট তথ্য</p>
+                <h3 className="font-extrabold text-base text-white">নগদ পেমেন্ট কনফিগারেশন</h3>
+                <p className="text-xs text-slate-400">নগদ সেন্ড মানি বা মার্চেন্ট পেমেন্ট সেটিংস</p>
               </div>
             </div>
 
@@ -175,62 +182,63 @@ export const AdminPaymentSettings: React.FC<AdminPaymentSettingsProps> = ({
                 onChange={(e) => setNagadEnabled(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#f7941d]"></div>
-              <span className="ml-2 text-xs font-bold text-slate-700">
-                {nagadEnabled ? 'সক্রিয় (Active)' : 'নিষ্ক্রিয়'}
+              <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#f7941d]"></div>
+              <span className="ml-2 text-xs font-bold text-slate-300">
+                {nagadEnabled ? 'সক্রিয়' : 'নিষ্ক্রিয়'}
               </span>
             </label>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                নগদ নম্বর (Payment / Send Money Number) *
+              <label className="block text-xs font-bold text-slate-300 mb-1">
+                নগদ অ্যাকাউন্ট নম্বর
               </label>
               <input
                 type="text"
-                required
+                required={nagadEnabled}
                 value={nagadNumber}
                 onChange={(e) => setNagadNumber(e.target.value)}
-                placeholder="018XXXXXXXX"
-                className="w-full px-3 py-2 text-sm font-mono font-bold rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#f7941d] bg-white"
+                placeholder="যেমন: 01812-345678"
+                className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white font-mono"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                অ্যাকাউন্টের ধরন
+              <label className="block text-xs font-bold text-slate-300 mb-1">
+                অ্যাকাউন্ট টাইপ (Account Type)
               </label>
               <select
                 value={nagadType}
                 onChange={(e) => setNagadType(e.target.value as any)}
-                className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#f7941d] bg-white"
+                className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white font-medium"
               >
-                <option value="personal">Personal (সেন্ড মানি করতে হবে)</option>
-                <option value="merchant">Merchant (পেমেন্ট করতে হবে)</option>
+                <option value="personal">Personal (সেন্ড মানি)</option>
+                <option value="merchant">Merchant (পেমেন্ট)</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              পেমেন্ট নির্দেশনাবলি (Payment Instructions for Customer)
+            <label className="block text-xs font-bold text-slate-300 mb-1">
+              নগদ পেমেন্ট নির্দেশিকা (Instructions for Student)
             </label>
             <textarea
-              rows={3}
+              rows={4}
               value={nagadInstructions}
               onChange={(e) => setNagadInstructions(e.target.value)}
-              placeholder="ধাপ ১: নগদ অ্যাপে যান...\nধাপ ২: সেন্ড মানি করুন..."
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#f7941d] bg-white"
+              placeholder="নগদ পেমেন্টের ধাপগুলো লিখুন..."
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-white"
             />
           </div>
         </div>
 
+        {/* Submit */}
         <div className="flex justify-end pt-2">
           <button
             type="submit"
             disabled={isSaving}
-            className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-md cursor-pointer transition-all disabled:opacity-50"
+            className="px-6 py-2.5 bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-blue-600/30 cursor-pointer disabled:opacity-50 border border-blue-400/30"
           >
             {isSaving ? (
               <>
@@ -240,7 +248,7 @@ export const AdminPaymentSettings: React.FC<AdminPaymentSettingsProps> = ({
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                <span>পেমেন্ট সেটিংস সেভ করুন</span>
+                <span>পেমেন্ট সেটিংস সংরক্ষণ করুন</span>
               </>
             )}
           </button>

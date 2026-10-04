@@ -107,6 +107,67 @@ apiRouter.get('/public/orders/:orderId', (req: Request, res: Response) => {
   }
 });
 
+// Standalone printable receipt endpoint
+apiRouter.get('/public/orders/:orderId/receipt.html', (req: Request, res: Response) => {
+  try {
+    const order = dbService.getOrderById(req.params.orderId);
+    if (!order) {
+      return res.status(404).send('<h1>অর্ডারটি খুঁজে পাওয়া যায়নি</h1>');
+    }
+    const isVerified = order.status === 'Payment Verified' || order.status === 'Completed';
+    const formattedDate = new Date(order.createdAt).toLocaleDateString('bn-BD', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    const html = `<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>Receipt-${order.id} - ProjuktiShikha BD</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background: #020617; color: #0f172a; padding: 30px 15px; display: flex; justify-content: center; }
+    .card { max-width: 650px; width: 100%; background: #ffffff; border-radius: 16px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+    .btn { background: #2563eb; color: white; padding: 10px 18px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+    @media print { body { background: white; padding: 0; } .card { box-shadow: none; border: none; padding: 0; } .no-print { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div style="border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+      <div>
+        <h2 style="color: #1e40af; margin: 0;">ProjuktiShikha BD</h2>
+        <p style="color: #64748b; font-size: 13px; margin: 4px 0 0 0;">অফিসিয়াল পেমেন্ট ইনভয়েস</p>
+      </div>
+      <div style="text-align: right;">
+        <span style="font-family: monospace; font-weight: bold; font-size: 18px; color: #0f172a;">#${order.id}</span>
+        <div style="font-size: 12px; color: #64748b;">${formattedDate}</div>
+      </div>
+    </div>
+    <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px; border-radius: 10px; font-weight: bold; margin-bottom: 20px;">
+      ${isVerified ? '✓ পেমেন্ট ভেরিফাইড (Payment Verified)' : '⏳ যাচাই প্রক্রিয়াধীন (Pending Verification)'}
+    </div>
+    <div style="margin-bottom: 20px; font-size: 13px;">
+      <p><strong>গ্রাহকের নাম:</strong> ${order.customerName}</p>
+      <p><strong>মোবাইল:</strong> ${order.customerPhone}</p>
+      <p><strong>পেমেন্ট মেথড:</strong> ${order.paymentMethod} (TrxID: ${order.transactionId})</p>
+      <p><strong>কোর্স:</strong> ${order.productName}</p>
+      <p><strong>টাকা:</strong> ৳${order.amount.toLocaleString('en-IN')}</p>
+    </div>
+    <div class="no-print" style="margin-top: 24px; text-align: right;">
+      <button class="btn" onclick="window.print()">🖨️ প্রিন্ট / Save as PDF</button>
+    </div>
+  </div>
+</body>
+</html>`;
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch (err: any) {
+    res.status(500).send(err.message);
+  }
+});
+
 // ---------------- Admin Endpoints ----------------
 
 // Admin Login

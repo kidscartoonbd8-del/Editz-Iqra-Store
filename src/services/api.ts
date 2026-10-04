@@ -153,6 +153,7 @@ export class ApiService {
 
       this.eventSource.addEventListener('connected', (e) => handle(e as MessageEvent, 'connected'));
       this.eventSource.addEventListener('products_updated', (e) => handle(e as MessageEvent, 'products_updated'));
+      this.eventSource.addEventListener('admin_products_updated', (e) => handle(e as MessageEvent, 'admin_products_updated'));
       this.eventSource.addEventListener('hero_updated', (e) => handle(e as MessageEvent, 'hero_updated'));
       this.eventSource.addEventListener('payment_updated', (e) => handle(e as MessageEvent, 'payment_updated'));
       this.eventSource.addEventListener('offers_updated', (e) => handle(e as MessageEvent, 'offers_updated'));

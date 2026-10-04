@@ -38,24 +38,24 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   )}`;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-      <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200 max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+      <div className="relative w-full max-w-3xl bg-[#040816] text-slate-100 rounded-3xl shadow-2xl border border-blue-950 overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200 max-h-[92vh] flex flex-col">
         {/* Header Bar */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+        <div className="px-6 py-4 border-b border-blue-950/80 flex items-center justify-between bg-[#02050f]">
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800">
+            <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-blue-950/90 text-blue-300 border border-blue-800/40">
               {product.category}
             </span>
             {product.offerBadge && (
-              <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-800 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-600" />
+              <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-linear-to-r from-blue-600 to-indigo-600 text-white flex items-center gap-1 border border-blue-400/30">
+                <Sparkles className="w-3 h-3 text-cyan-300" />
                 {product.offerBadge}
               </span>
             )}
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200 rounded-full transition-colors cursor-pointer"
+            className="p-1.5 text-slate-400 hover:text-white hover:bg-blue-950/60 rounded-full transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -65,7 +65,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         <div className="overflow-y-auto p-6 sm:p-8 space-y-6">
           {/* Main Hero Visual & Thumbnails */}
           <div className="space-y-3">
-            <div className="min-h-[220px] max-h-[420px] w-full rounded-2xl overflow-hidden bg-slate-900/5 border border-slate-200 shadow-inner flex items-center justify-center p-2">
+            <div className="min-h-[220px] max-h-[420px] w-full rounded-2xl overflow-hidden bg-[#02050f] border border-blue-950 shadow-inner flex items-center justify-center p-2">
               <img
                 src={selectedImage || product.thumbnail}
                 alt={product.name}
@@ -81,7 +81,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     key={i}
                     onClick={() => setSelectedImage(img)}
                     className={`w-16 h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
-                      selectedImage === img ? 'border-emerald-500 scale-105' : 'border-transparent opacity-70 hover:opacity-100'
+                      selectedImage === img ? 'border-blue-500 scale-105' : 'border-transparent opacity-70 hover:opacity-100'
                     }`}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
@@ -93,39 +93,39 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
           {/* Title & Metadata */}
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-white leading-tight">
               {product.name}
             </h2>
-            <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-slate-500 font-medium">
+            <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-slate-400 font-medium">
               {product.courseDuration && (
-                <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg">
-                  <Clock className="w-4 h-4 text-emerald-600" />
+                <div className="flex items-center gap-1.5 bg-blue-950/40 text-slate-300 px-3 py-1.5 rounded-lg border border-blue-900/40">
+                  <Clock className="w-4 h-4 text-blue-400" />
                   <span>{product.courseDuration}</span>
                 </div>
               )}
               {product.courseLevel && (
-                <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg">
-                  <BarChart className="w-4 h-4 text-teal-600" />
+                <div className="flex items-center gap-1.5 bg-blue-950/40 text-slate-300 px-3 py-1.5 rounded-lg border border-blue-900/40">
+                  <BarChart className="w-4 h-4 text-cyan-400" />
                   <span>লেভেল: {product.courseLevel}</span>
                 </div>
               )}
-              <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded-lg font-bold">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <div className="flex items-center gap-1.5 bg-blue-900/30 text-blue-200 px-3 py-1.5 rounded-lg font-bold border border-blue-700/40">
+                <ShieldCheck className="w-4 h-4 text-blue-400" />
                 <span>লাইফটাইম এক্সেস + সার্টিফিকেট</span>
               </div>
             </div>
           </div>
 
-          {/* Pricing Box */}
-          <div className="bg-linear-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-200/80 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Pricing Box with Blue Gradient */}
+          <div className="bg-linear-to-r from-blue-950/60 via-[#06122d] to-blue-950/60 border border-blue-800/40 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-black/40">
             <div>
-              <span className="text-xs font-bold text-emerald-800 block">কোর্স ফি (এককালীন)</span>
+              <span className="text-xs font-bold text-blue-300 block">কোর্স ফি (এককালীন)</span>
               <div className="flex items-baseline gap-3 mt-1">
-                <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                <span className="text-2xl sm:text-3xl font-extrabold text-blue-400">
                   ৳{product.currentPrice.toLocaleString('en-IN')}
                 </span>
                 {product.previousPrice > product.currentPrice && (
-                  <span className="text-base text-slate-400 line-through font-medium">
+                  <span className="text-base text-slate-500 line-through font-medium">
                     ৳{product.previousPrice.toLocaleString('en-IN')}
                   </span>
                 )}
@@ -135,14 +135,14 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-slate-500 mt-1">
+              <p className="text-[11px] text-slate-400 mt-1">
                 বিকাশ বা নগদ দিয়ে সরাসরি সেন্ড মানি করে এখনই এনরোল করতে পারবেন।
               </p>
             </div>
 
             <button
               onClick={() => onBuyNow(product)}
-              className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer transition-all shrink-0"
+              className="px-6 py-3.5 bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/35 flex items-center justify-center gap-2 cursor-pointer transition-all shrink-0 border border-blue-400/25"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>Buy Now (এখনই ভর্তি হন)</span>
@@ -151,11 +151,11 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
           {/* Full Description */}
           <div>
-            <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <Layers className="w-4 h-4 text-emerald-600" />
+            <h4 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <Layers className="w-4 h-4 text-blue-400" />
               <span>কোর্স বিবরণ ও সারসংক্ষেপ</span>
             </h4>
-            <div className="text-xs sm:text-sm text-slate-600 leading-relaxed space-y-2 whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-100">
+            <div className="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-2 whitespace-pre-line bg-[#02050f] p-4 rounded-xl border border-blue-950">
               {product.fullDescription || product.shortDescription}
             </div>
           </div>
@@ -163,17 +163,17 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           {/* What you will learn */}
           {product.whatYouWillLearn && product.whatYouWillLearn.length > 0 && (
             <div>
-              <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <h4 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-blue-400" />
                 <span>এই কোর্সে যা যা শিখবেন</span>
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {product.whatYouWillLearn.map((item, idx) => (
                   <div
                     key={idx}
-                    className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700 font-medium"
+                    className="flex items-start gap-2.5 p-3 rounded-xl bg-[#02050f] border border-blue-950 text-xs text-slate-300 font-medium"
                   >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                     <span>{item}</span>
                   </div>
                 ))}
@@ -184,17 +184,17 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           {/* Features Checklist */}
           {product.features && product.features.length > 0 && (
             <div>
-              <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <Award className="w-4 h-4 text-emerald-600" />
+              <h4 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Award className="w-4 h-4 text-blue-400" />
                 <span>কোর্সের বিশেষ সুবিধাসমূহ</span>
               </h4>
               <div className="flex flex-wrap gap-2">
                 {product.features.map((feat, idx) => (
                   <span
                     key={idx}
-                    className="px-3 py-1.5 rounded-lg bg-teal-50 border border-teal-200/80 text-teal-900 text-xs font-semibold flex items-center gap-1.5"
+                    className="px-3 py-1.5 rounded-lg bg-blue-950/50 border border-blue-800/40 text-blue-200 text-xs font-semibold flex items-center gap-1.5"
                   >
-                    <Sparkles className="w-3 h-3 text-teal-600" />
+                    <Sparkles className="w-3 h-3 text-cyan-400" />
                     {feat}
                   </span>
                 ))}
@@ -204,21 +204,21 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         </div>
 
         {/* Modal Action Bottom Bar */}
-        <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+        <div className="p-4 sm:p-5 border-t border-blue-950 bg-[#02050f] flex items-center justify-between gap-3">
           <a
             href={whatsappInquiryUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
+            className="px-4 py-2.5 bg-blue-950/50 hover:bg-blue-900/60 text-blue-300 border border-blue-900/60 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
           >
-            <MessageSquare className="w-4 h-4 text-emerald-600" />
+            <MessageSquare className="w-4 h-4 text-blue-400" />
             <span>সরাসরি হোয়াটসঅ্যাপে জানুন</span>
           </a>
 
           <div className="flex items-center gap-3">
             <button
               onClick={() => onBuyNow(product)}
-              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition-colors flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center gap-2 cursor-pointer border border-blue-400/20"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>এনরোল করুন (৳{product.currentPrice.toLocaleString('en-IN')})</span>

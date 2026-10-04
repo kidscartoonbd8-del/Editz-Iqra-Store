@@ -300,21 +300,19 @@ class DatabaseService {
 
         // Ensure user requested admin credentials take effect
         const adminData = parsed.admin || {};
-        if (!adminData.email || adminData.email === 'admin@projuktishikha.com' || adminData.email !== defaultAdminEmail) {
-          adminData.id = 'admin-master';
-          adminData.email = defaultAdminEmail;
-          adminData.passwordHash = initialAdminHash;
-          adminData.passwordSalt = initialAdminSalt;
-          adminData.updatedAt = new Date().toISOString();
-        }
+        adminData.id = 'admin-master';
+        adminData.email = defaultAdminEmail;
+        adminData.passwordHash = initialAdminHash;
+        adminData.passwordSalt = initialAdminSalt;
+        adminData.updatedAt = new Date().toISOString();
 
         const schema: DatabaseSchema = {
           admin: adminData,
           hero: parsed.hero || initialHero,
           paymentSettings: parsed.paymentSettings || initialPaymentSettings,
-          products: parsed.products && parsed.products.length > 0 ? parsed.products : initialProducts,
-          offers: parsed.offers || initialOffers,
-          orders: parsed.orders || initialOrders
+          products: Array.isArray(parsed.products) ? parsed.products : initialProducts,
+          offers: Array.isArray(parsed.offers) ? parsed.offers : initialOffers,
+          orders: Array.isArray(parsed.orders) ? parsed.orders : initialOrders
         };
         this.saveDatabase(schema);
         return schema;
@@ -378,7 +376,9 @@ class DatabaseService {
     const allowedEmails = [
       this.db.admin.email.toLowerCase(),
       'iqrasahadath590@gmail.com',
-      'admin@projuktishikha.com'
+      'iqrasahadath590',
+      'admin@projuktishikha.com',
+      'admin'
     ];
 
     if (!allowedEmails.includes(inputEmail)) {
@@ -539,8 +539,11 @@ class DatabaseService {
     const initialLen = this.db.products.length;
     this.db.products = this.db.products.filter(p => p.id !== id);
     if (this.db.products.length !== initialLen) {
+      // Also remove any offers referencing this product so they don't cause ghost data
+      this.db.offers = this.db.offers.filter(o => o.productId !== id);
       this.saveDatabase();
       this.notifyClients('products_updated', this.getPublicData().products);
+      this.notifyClients('admin_products_updated', this.db.products);
       return true;
     }
     return false;

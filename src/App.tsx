@@ -138,6 +138,10 @@ export default function App() {
     const unsubscribeSSE = ApiService.subscribeToEvents((event, data) => {
       if (event === 'products_updated') {
         setProducts(data.filter((p: Product) => p.status === 'published'));
+        if (ApiService.getAdminToken()) {
+          loadAdminData();
+        }
+      } else if (event === 'admin_products_updated') {
         setAllProducts(data);
       } else if (event === 'hero_updated') {
         setHero(data);
@@ -145,7 +149,9 @@ export default function App() {
         setPaymentSettings(data);
       } else if (event === 'offers_updated') {
         setOffers(data);
-        setAllOffers(data);
+        if (ApiService.getAdminToken()) {
+          loadAdminData();
+        }
       } else if (event === 'new_order' || event === 'order_status_updated') {
         if (ApiService.getAdminToken()) {
           loadAdminData();
@@ -338,7 +344,7 @@ export default function App() {
 
   // ---------------- Public Website View ----------------
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-linear-to-b from-[#020617] via-[#040a1c] to-[#020617] flex flex-col font-sans text-slate-100 selection:bg-blue-600 selection:text-white">
       {/* Navbar */}
       {hero && (
         <Navbar
@@ -395,20 +401,20 @@ export default function App() {
       <section id="products-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
-            <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-800/40 text-blue-300 text-xs font-bold">
+            <BookOpen className="w-3.5 h-3.5 text-blue-400" />
             <span>প্রফেশনাল কোর্স ও ডিজিটাল রিসোর্স</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
             আপনার পছন্দের কোর্সটি বেছে নিন
           </h2>
-          <p className="text-sm text-slate-500 leading-relaxed">
+          <p className="text-sm text-slate-400 leading-relaxed">
             লাইভ প্রজেক্ট, আন্তর্জাতিক মানের সিলেবাস এবং ২৪/৭ ডেডিকেটেড মেন্টর সাপোর্ট সহ ক্যারিয়ার শুরু করুন আজই।
           </p>
         </div>
 
         {/* Filter & Search Bar */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs mb-8 space-y-3">
+        <div className="bg-[#050b1a]/90 backdrop-blur-md p-4 rounded-2xl border border-blue-950/80 shadow-xl shadow-black/40 mb-8 space-y-3">
           {/* Category Tabs */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {categories.map((cat) => (
@@ -417,8 +423,8 @@ export default function App() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                   selectedCategory === cat
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                    ? 'bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 text-white shadow-md shadow-blue-600/30 border border-blue-400/20'
+                    : 'bg-blue-950/40 hover:bg-blue-900/50 text-slate-300 border border-blue-900/40'
                 }`}
               >
                 {cat === 'All' ? 'সকল কোর্স' : cat}
@@ -427,24 +433,24 @@ export default function App() {
           </div>
 
           {/* Search & Sort Row */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 border-t border-slate-100">
+          <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 border-t border-blue-950/60">
             <div className="relative flex-1 w-full">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+              <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="কোর্সের নাম বা বিষয় লিখে সার্চ করুন..."
-                className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50"
+                className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-slate-100 placeholder-slate-500"
               />
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
+              <ArrowUpDown className="w-3.5 h-3.5 text-blue-400" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full sm:w-44 px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50 font-medium"
+                className="w-full sm:w-44 px-3 py-2 text-xs rounded-xl border border-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#02050f] text-slate-200 font-medium"
               >
                 <option value="default">ডিফল্ট ক্রম</option>
                 <option value="price-low">মূল্য: কম থেকে বেশি</option>
@@ -456,17 +462,17 @@ export default function App() {
 
         {/* Product Cards Grid */}
         {isLoadingPublic ? (
-          <div className="py-20 flex flex-col items-center justify-center text-slate-500 gap-3">
-            <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+          <div className="py-20 flex flex-col items-center justify-center text-slate-400 gap-3">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
             <span className="text-xs font-semibold">কোর্সসমূহ লোড হচ্ছে...</span>
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="py-16 text-center bg-white rounded-3xl border border-slate-200 p-8 space-y-3">
-            <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+          <div className="py-16 text-center bg-[#050b1a] rounded-3xl border border-blue-950 p-8 space-y-3">
+            <div className="w-12 h-12 rounded-full bg-blue-950/40 text-blue-400 flex items-center justify-center mx-auto border border-blue-900/50">
               <Search className="w-6 h-6" />
             </div>
-            <h3 className="font-bold text-base text-slate-800">কোনো কোর্স পাওয়া যায়নি</h3>
-            <p className="text-xs text-slate-500">
+            <h3 className="font-bold text-base text-white">কোনো কোর্স পাওয়া যায়নি</h3>
+            <p className="text-xs text-slate-400">
               অনুগ্রহ করে অন্য কোনো কি-ওয়ার্ড দিয়ে সার্চ করুন অথবা ক্যাটাগরি পরিবর্তন করুন।
             </p>
             <button
@@ -474,7 +480,7 @@ export default function App() {
                 setSearchTerm('');
                 setSelectedCategory('All');
               }}
-              className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold cursor-pointer"
+              className="px-4 py-2 bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-xs font-bold cursor-pointer shadow-md shadow-blue-600/30"
             >
               সকল কোর্স দেখুন
             </button>

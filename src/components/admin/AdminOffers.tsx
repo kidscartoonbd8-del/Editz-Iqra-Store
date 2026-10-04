@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Offer, Product } from '../../types/index.ts';
 import { ApiService } from '../../services/api.ts';
-import { Plus, Edit, Trash2, Tag, Calendar, Percent, Sparkles, X, Loader2, Save } from 'lucide-react';
+import { Plus, Edit, Trash2, Tag, Calendar, Percent, Sparkles, X, Loader2, Save, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface AdminOffersProps {
   offers: Offer[];
@@ -31,9 +31,12 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [offerToDelete, setOfferToDelete] = useState<Offer | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const openAddModal = () => {
     setEditingOffer(null);
+    setErrorMessage(null);
     setName('');
     setProductId(products[0]?.id || '');
     setPreviousPrice(products[0]?.previousPrice?.toString() || '0');
@@ -48,6 +51,7 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
 
   const openEditModal = (offer: Offer) => {
     setEditingOffer(offer);
+    setErrorMessage(null);
     setName(offer.name);
     setProductId(offer.productId || '');
     setPreviousPrice(offer.previousPrice?.toString() || '0');
@@ -70,9 +74,15 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
     }
   };
 
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+    setErrorMessage(null);
 
     const prevNum = parseFloat(previousPrice) || 0;
     const offNum = parseFloat(offerPrice) || 0;
@@ -96,13 +106,15 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
     try {
       if (editingOffer) {
         await ApiService.adminUpdateOffer(editingOffer.id, payload);
+        showToast('অফারটি সফলভাবে আপডেট হয়েছে!');
       } else {
         await ApiService.adminCreateOffer(payload);
+        showToast('নতুন অফার সফলভাবে যুক্ত হয়েছে!');
       }
       setIsModalOpen(false);
       onRefresh();
     } catch (err: any) {
-      alert(err.message || 'অফার সেভ করতে সমস্যা হয়েছে।');
+      setErrorMessage(err.message || 'অফার সেভ করতে সমস্যা হয়েছে।');
     } finally {
       setIsSaving(false);
     }
@@ -113,6 +125,7 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
     setIsDeleting(true);
     try {
       await ApiService.adminDeleteOffer(offerToDelete.id);
+      showToast('অফারটি সফলভাবে ডিলিট করা হয়েছে!');
       setOfferToDelete(null);
       onRefresh();
     } catch (err: any) {
@@ -123,143 +136,188 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
   };
 
   return (
-    <div className="space-y-5">
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 text-slate-100 font-sans">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="p-3 bg-blue-950 border border-blue-500/50 text-cyan-300 text-xs font-bold rounded-2xl flex items-center justify-between shadow-xl animate-in slide-in-from-top duration-200">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-cyan-400" />
+            <span>{toastMessage}</span>
+          </div>
+          <button onClick={() => setToastMessage(null)} className="p-1 hover:opacity-75">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Top Header */}
+      <div className="bg-linear-to-r from-black via-blue-950 to-black p-5 sm:p-6 rounded-3xl border border-blue-900/60 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">বিশেষ অফার ব্যবস্থাপনা</h2>
-          <p className="text-xs text-slate-500">
-            ওয়েবসাইটে প্রদর্শিত সকল স্পেশাল ক্যাম্পেইন ও মেগা ডিসকাউন্ট অফার তৈরি ও পরিচালনা করুন
+          <h2 className="text-xl font-black text-white flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-blue-600/20 text-cyan-300 border border-blue-500/30">
+              <Tag className="w-5 h-5" />
+            </span>
+            <span>বিশেষ অফার ও ডিসকাউন্ট ক্যাম্পেইন</span>
+          </h2>
+          <p className="text-xs text-slate-400 mt-1">
+            কোর্সের জন্য আনলিমিটেড বিশেষ অফার, ডিসকাউন্ট ও ব্যানার তৈরি ও পরিচালনা করুন
           </p>
         </div>
 
         <button
           onClick={openAddModal}
-          className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 cursor-pointer"
+          className="px-5 py-2.5 bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer border border-blue-400/30"
         >
           <Plus className="w-4 h-4" />
-          <span>নতুন অফার যুক্ত করুন</span>
+          <span>নতুন অফার তৈরি করুন</span>
         </button>
       </div>
 
       {/* Offers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {offers.map((offer) => {
-          const discount = offer.discountPercentage ||
-            (offer.previousPrice > offer.offerPrice
-              ? Math.round(((offer.previousPrice - offer.offerPrice) / offer.previousPrice) * 100)
-              : 0);
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {offers.length === 0 ? (
+          <div className="col-span-full p-12 text-center bg-linear-to-b from-[#020617] to-[#040e29] rounded-3xl border border-blue-900/40 text-slate-400 text-xs space-y-2">
+            <Tag className="w-8 h-8 text-blue-400 mx-auto" />
+            <p className="font-bold text-slate-200">এখনও কোনো অফার তৈরি করা হয়নি</p>
+            <p>উপরের "নতুন অফার তৈরি করুন" বাটনে ক্লিক করে প্রথম অফার তৈরি করুন।</p>
+          </div>
+        ) : (
+          offers.map((offer) => {
+            const linkedProduct = products.find(p => p.id === offer.productId);
+            const discount = offer.discountPercentage ||
+              (offer.previousPrice > offer.offerPrice
+                ? Math.round(((offer.previousPrice - offer.offerPrice) / offer.previousPrice) * 100)
+                : 0);
 
-          return (
-            <div
-              key={offer.id}
-              className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 flex flex-col justify-between space-y-4 hover:border-emerald-300 transition-colors"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-xs font-bold flex items-center gap-1">
-                    <Tag className="w-3 h-3" />
-                    {offer.badge || 'অফার'}
-                  </span>
+            return (
+              <div
+                key={offer.id}
+                className="bg-linear-to-br from-[#020617] via-[#040e29] to-[#020617] rounded-3xl border border-blue-900/60 p-5 shadow-xl flex flex-col justify-between space-y-4 hover:border-blue-500/50 transition-all duration-300"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-600/20 text-cyan-300 border border-blue-500/30 flex items-center gap-1">
+                      <Sparkles className="w-2.5 h-2.5 text-cyan-400" />
+                      {offer.badge || 'বিশেষ ছাড়'}
+                    </span>
 
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    offer.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'
-                  }`}>
-                    {offer.isActive ? 'Active' : 'Inactive'}
-                  </span>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                        offer.isActive
+                          ? 'bg-blue-950 text-cyan-300 border-blue-700/50'
+                          : 'bg-slate-800 text-slate-400 border-slate-700'
+                      }`}
+                    >
+                      {offer.isActive ? 'সক্রিয় (Active)' : 'নিষ্ক্রিয় (Inactive)'}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold text-base text-white line-clamp-1">{offer.name}</h3>
+                    <p className="text-xs text-slate-400 line-clamp-2 mt-1">
+                      {offer.description || linkedProduct?.shortDescription || 'কোনো বিবরণ নেই'}
+                    </p>
+                  </div>
+
+                  {linkedProduct && (
+                    <div className="p-2.5 rounded-xl bg-[#02050f] border border-blue-950 flex items-center gap-2.5">
+                      {linkedProduct.thumbnail && (
+                        <img
+                          src={linkedProduct.thumbnail}
+                          alt=""
+                          className="w-10 h-10 rounded-lg object-contain bg-black shrink-0"
+                        />
+                      )}
+                      <div className="min-w-0">
+                        <span className="text-[10px] text-slate-400 block">কোর্স:</span>
+                        <p className="text-xs font-bold text-slate-200 truncate">{linkedProduct.name}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-baseline gap-2 pt-1">
+                    <span className="text-xl font-extrabold text-white font-mono">
+                      ৳{offer.offerPrice.toLocaleString('en-IN')}
+                    </span>
+                    {offer.previousPrice > offer.offerPrice && (
+                      <span className="text-xs text-slate-500 line-through font-mono">
+                        ৳{offer.previousPrice.toLocaleString('en-IN')}
+                      </span>
+                    )}
+                    {discount > 0 && (
+                      <span className="text-xs font-bold text-cyan-400 bg-blue-950 px-2 py-0.5 rounded-md border border-blue-800/40">
+                        {discount}% ছাড়
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                <h3 className="font-bold text-base text-slate-900">{offer.name}</h3>
-                <p className="text-xs text-slate-500 mt-1 line-clamp-2">{offer.description}</p>
-
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-xl font-black text-emerald-600">
-                    ৳{offer.offerPrice.toLocaleString('en-IN')}
-                  </span>
-                  {offer.previousPrice > offer.offerPrice && (
-                    <span className="text-xs text-slate-400 line-through">
-                      ৳{offer.previousPrice.toLocaleString('en-IN')}
-                    </span>
-                  )}
-                  {discount > 0 && (
-                    <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-red-100 text-red-700">
-                      {discount}% OFF
-                    </span>
-                  )}
+                <div className="pt-3 border-t border-blue-950 flex items-center justify-end gap-2">
+                  <button
+                    onClick={() => openEditModal(offer)}
+                    className="p-2 bg-blue-950/80 hover:bg-blue-900 text-blue-300 rounded-xl transition-colors cursor-pointer border border-blue-800/50"
+                    title="এডিট করুন"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setOfferToDelete(offer)}
+                    className="p-2 bg-red-950/60 hover:bg-red-600 text-red-400 hover:text-white rounded-xl transition-all cursor-pointer border border-red-800/50"
+                    title="মুছে ফেলুন"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-
-                {offer.endDate && (
-                  <p className="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    <span>মেয়াদ: {offer.endDate}</span>
-                  </p>
-                )}
               </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
-                <button
-                  onClick={() => openEditModal(offer)}
-                  className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs cursor-pointer"
-                  title="এডিট"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setOfferToDelete(offer)}
-                  className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg text-xs cursor-pointer"
-                  title="মুছে ফেলুন"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
-      {/* Offer Form Modal */}
+      {/* Offer Edit/Add Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3">
-          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto animate-in fade-in duration-200">
-            <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-              <h3 className="font-bold text-base">
-                {editingOffer ? 'অফার সম্পাদনা করুন' : 'নতুন অফার যুক্ত করুন'}
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="w-full max-w-lg bg-linear-to-b from-[#020617] via-[#050f28] to-[#020617] rounded-3xl shadow-2xl border border-blue-900/60 p-6 space-y-4 max-h-[92vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-blue-950 pb-3">
+              <h3 className="font-extrabold text-base text-white">
+                {editingOffer ? 'অফার সম্পাদনা' : 'নতুন অফার যুক্ত করুন'}
               </h3>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-white rounded-lg cursor-pointer"
-              >
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="p-6 space-y-4">
+            {errorMessage && (
+              <div className="p-3 bg-red-950/60 border border-red-800 text-red-300 text-xs rounded-xl flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSave} className="space-y-4 text-xs">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  অফারের নাম *
-                </label>
+                <label className="block font-bold text-slate-300 mb-1">অফারের নাম</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="যেমন: গ্র্যান্ড স্কলারশিপ অফার ২০২৬"
-                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                  placeholder="যেমন: পবিত্র ঈদ স্পেশাল স্কলারশিপ অফার"
+                  className="w-full p-2.5 bg-[#02050f] border border-blue-900/60 rounded-xl text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  সম্পর্কিত কোর্স (Linked Course)
-                </label>
+                <label className="block font-bold text-slate-300 mb-1">কোর্স নির্বাচন করুন</label>
                 <select
                   value={productId}
                   onChange={(e) => handleProductSelect(e.target.value)}
-                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                  className="w-full p-2.5 bg-[#02050f] border border-blue-900/60 rounded-xl text-white font-medium"
                 >
-                  <option value="">কোনো কোর্স লিঙ্ক ছাড়া</option>
-                  {products.map(p => (
+                  <option value="">-- কোনো নির্দিষ্ট কোর্স নয় (সাধারণ অফার) --</option>
+                  {products.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.name} (৳{p.currentPrice})
+                      {p.name} (মূল্য: ৳{p.currentPrice})
                     </option>
                   ))}
                 </select>
@@ -267,109 +325,78 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    পূর্বের মূল্য (৳)
-                  </label>
+                  <label className="block font-bold text-slate-300 mb-1">অফার মূল্য (৳)</label>
                   <input
                     type="number"
-                    value={previousPrice}
-                    onChange={(e) => setPreviousPrice(e.target.value)}
-                    className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    অফার মূল্য (৳) *
-                  </label>
-                  <input
-                    type="number"
+                    min="0"
                     required
                     value={offerPrice}
                     onChange={(e) => setOfferPrice(e.target.value)}
-                    className="w-full px-3 py-2 text-xs sm:text-sm font-bold rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                    className="w-full p-2.5 bg-[#02050f] border border-blue-900/60 rounded-xl text-white font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-300 mb-1">পূর্বের মূল্য (৳)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={previousPrice}
+                    onChange={(e) => setPreviousPrice(e.target.value)}
+                    className="w-full p-2.5 bg-[#02050f] border border-blue-900/60 rounded-xl text-white font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  অফার ব্যাজ (Offer Badge)
-                </label>
+                <label className="block font-bold text-slate-300 mb-1">অফার ব্যাজ</label>
                 <input
                   type="text"
                   value={badge}
                   onChange={(e) => setBadge(e.target.value)}
-                  placeholder="যেমন: 🔥 মেগা অফার"
-                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                  placeholder="যেমন: 🔥 মেগা অফার, সীমিত আসন..."
+                  className="w-full p-2.5 bg-[#02050f] border border-blue-900/60 rounded-xl text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  অফারের বিবরণ (Description)
-                </label>
+                <label className="block font-bold text-slate-300 mb-1">অফার বিবরণ</label>
                 <textarea
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="অফারের সুযোগ ও শর্তাবলী লিখুন..."
-                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                  placeholder="অফারের সুযোগ ও সুবিধার বিবরণ লিখুন..."
+                  className="w-full p-2.5 bg-[#02050f] border border-blue-900/60 rounded-xl text-white"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    শুরুর তারিখ
-                  </label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    শেষ তারিখ
-                  </label>
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 pt-2">
+              <div className="flex items-center gap-2 pt-1">
                 <input
                   type="checkbox"
-                  id="isActiveToggle"
+                  id="offerActive"
                   checked={isActive}
                   onChange={(e) => setIsActive(e.target.checked)}
-                  className="w-4 h-4 text-emerald-600 rounded"
+                  className="w-4 h-4 rounded text-blue-600 bg-slate-900 border-slate-700"
                 />
-                <label htmlFor="isActiveToggle" className="text-xs font-bold text-slate-700 cursor-pointer">
-                  অফারটি সক্রিয় রাখুন (Active on Website)
+                <label htmlFor="offerActive" className="font-bold text-slate-300 cursor-pointer">
+                  অফারটি এখন সক্রিয় রাখুন (পাবলিক ওয়েবসাইটে দৃশ্যমান হবে)
                 </label>
               </div>
 
-              <div className="pt-4 border-t border-slate-200 flex justify-end gap-2">
+              <div className="pt-3 border-t border-blue-950 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold cursor-pointer"
+                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold"
                 >
                   বাতিল
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold shadow-md shadow-blue-600/30 flex items-center gap-1.5"
                 >
                   {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  <span>সেভ করুন</span>
+                  <span>সংরক্ষণ করুন</span>
                 </button>
               </div>
             </form>
@@ -377,50 +404,30 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
         </div>
       )}
 
-      {/* In-App Delete Confirmation Modal */}
+      {/* Delete Confirmation Modal */}
       {offerToDelete && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
-            <div className="w-14 h-14 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto shadow-inner">
-              <Trash2 className="w-7 h-7" />
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-sm bg-linear-to-b from-[#020617] via-[#091535] to-[#020617] rounded-3xl border border-red-500/50 p-6 space-y-4 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-red-950/80 text-red-400 border border-red-500/40 flex items-center justify-center mx-auto">
+              <Trash2 className="w-6 h-6" />
             </div>
-
-            <div className="text-center space-y-2">
-              <h3 className="text-lg font-black text-slate-900">অফারটি মুছে ফেলতে চান?</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                আপনি কি নিশ্চিত যে <strong className="text-slate-900">"{offerToDelete.name}"</strong> সম্পূর্ণ ডিলিট করতে চান?
-              </p>
-              <p className="text-[11px] text-red-500 font-semibold bg-red-50 p-2 rounded-xl border border-red-200">
-                ⚠️ এটি মুছে ফেললে ওয়েবসাইট থেকে এই অফারটি চলে যাবে।
-              </p>
-            </div>
-
-            <div className="flex gap-2.5 pt-2">
+            <h4 className="text-base font-black text-white">অফারটি মুছে ফেলতে চান?</h4>
+            <p className="text-xs text-slate-300">
+              "{offerToDelete.name}" অফারটি স্থায়ীভাবে ডিলিট করা হবে।
+            </p>
+            <div className="flex gap-2 pt-2">
               <button
-                type="button"
                 onClick={() => setOfferToDelete(null)}
-                disabled={isDeleting}
-                className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors cursor-pointer"
+                className="flex-1 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold"
               >
                 বাতিল
               </button>
               <button
-                type="button"
                 onClick={confirmDeleteOffer}
                 disabled={isDeleting}
-                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold"
               >
-                {isDeleting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>মুছে ফেলা হচ্ছে...</span>
-                  </>
-                ) : (
-                  <>
-                    <Trash2 className="w-4 h-4" />
-                    <span>হ্যাঁ, ডিলিট করুন</span>
-                  </>
-                )}
+                {isDeleting ? 'ডিলিট হচ্ছে...' : 'হ্যাঁ, ডিলিট করুন'}
               </button>
             </div>
           </div>
