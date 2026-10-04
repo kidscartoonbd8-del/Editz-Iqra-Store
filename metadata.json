@@ -1,0 +1,6 @@
+{
+  "name": "ProjuktiShikha BD - E-Commerce & Learning",
+  "description": "Premium Bangladeshi online learning and digital products platform with bKash and Nagad payments, instant orders, and verified receipts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
