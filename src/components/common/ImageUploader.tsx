@@ -73,11 +73,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       />
 
       {value ? (
-        <div className={`relative group w-full ${aspectClass} rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-xs`}>
+        <div className="relative group w-full min-h-[160px] max-h-[380px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100/80 shadow-xs flex items-center justify-center p-2">
           <img
             src={value}
             alt="Preview"
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-102"
+            className="max-h-[360px] w-auto max-w-full object-contain rounded-xl transition-transform duration-300 group-hover:scale-101"
           />
 
           {/* Action Overlay */}

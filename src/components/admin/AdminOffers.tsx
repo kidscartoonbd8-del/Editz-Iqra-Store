@@ -29,6 +29,8 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
   const [isActive, setIsActive] = useState(true);
 
   const [isSaving, setIsSaving] = useState(false);
+  const [offerToDelete, setOfferToDelete] = useState<Offer | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const openAddModal = () => {
     setEditingOffer(null);
@@ -106,13 +108,17 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
     }
   };
 
-  const handleDelete = async (id: string, offerName: string) => {
-    if (!window.confirm(`আপনি কি "${offerName}" মুছে ফেলতে চান?`)) return;
+  const confirmDeleteOffer = async () => {
+    if (!offerToDelete) return;
+    setIsDeleting(true);
     try {
-      await ApiService.adminDeleteOffer(id);
+      await ApiService.adminDeleteOffer(offerToDelete.id);
+      setOfferToDelete(null);
       onRefresh();
     } catch (err: any) {
-      alert(err.message || 'মুছে ফেলতে সমস্যা হয়েছে।');
+      console.error(err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -198,8 +204,8 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
                   <Edit className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => handleDelete(offer.id, offer.name)}
-                  className="p-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs cursor-pointer"
+                  onClick={() => setOfferToDelete(offer)}
+                  className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg text-xs cursor-pointer"
                   title="মুছে ফেলুন"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -367,6 +373,56 @@ export const AdminOffers: React.FC<AdminOffersProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* In-App Delete Confirmation Modal */}
+      {offerToDelete && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-14 h-14 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto shadow-inner">
+              <Trash2 className="w-7 h-7" />
+            </div>
+
+            <div className="text-center space-y-2">
+              <h3 className="text-lg font-black text-slate-900">অফারটি মুছে ফেলতে চান?</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                আপনি কি নিশ্চিত যে <strong className="text-slate-900">"{offerToDelete.name}"</strong> সম্পূর্ণ ডিলিট করতে চান?
+              </p>
+              <p className="text-[11px] text-red-500 font-semibold bg-red-50 p-2 rounded-xl border border-red-200">
+                ⚠️ এটি মুছে ফেললে ওয়েবসাইট থেকে এই অফারটি চলে যাবে।
+              </p>
+            </div>
+
+            <div className="flex gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setOfferToDelete(null)}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors cursor-pointer"
+              >
+                বাতিল
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteOffer}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>মুছে ফেলা হচ্ছে...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    <span>হ্যাঁ, ডিলিট করুন</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

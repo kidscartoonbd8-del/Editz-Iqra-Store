@@ -14,7 +14,8 @@ import {
   Sparkles,
   Loader2,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  X
 } from 'lucide-react';
 
 interface AdminProductsProps {
@@ -35,6 +36,11 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
+  // In-app delete confirmation state (No blocked window.confirm)
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
   const filtered = products.filter(p => {
@@ -45,14 +51,20 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
+  const showToast = (type: 'success' | 'error', message: string) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 4000);
+  };
+
   const handleTogglePublish = async (product: Product) => {
     setActionLoadingId(product.id);
     try {
       const newStatus = product.status === 'published' ? 'draft' : 'published';
       await ApiService.adminUpdateProduct(product.id, { status: newStatus });
+      showToast('success', `"${product.name}" এর স্ট্যাটাস আপডেট হয়েছে।`);
       onRefresh();
     } catch (err: any) {
-      alert(err.message || 'স্ট্যাটাস আপডেট ব্যর্থ হয়েছে।');
+      showToast('error', err.message || 'স্ট্যাটাস আপডেট ব্যর্থ হয়েছে।');
     } finally {
       setActionLoadingId(null);
     }
@@ -62,24 +74,27 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
     setActionLoadingId(id);
     try {
       await ApiService.adminDuplicateProduct(id);
+      showToast('success', 'কোর্সটি সফলভাবে কপি / ডুপ্লিকেট করা হয়েছে।');
       onRefresh();
     } catch (err: any) {
-      alert(err.message || 'ডুপ্লিকেট ব্যর্থ হয়েছে।');
+      showToast('error', err.message || 'ডুপ্লিকেট ব্যর্থ হয়েছে।');
     } finally {
       setActionLoadingId(null);
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`আপনি কি নিশ্চিত যে "${name}" মুছে ফেলতে চান?`)) return;
-    setActionLoadingId(id);
+  const confirmDeleteProduct = async () => {
+    if (!productToDelete) return;
+    setIsDeleting(true);
     try {
-      await ApiService.adminDeleteProduct(id);
+      await ApiService.adminDeleteProduct(productToDelete.id);
+      showToast('success', `"${productToDelete.name}" সফলভাবে ডিলিট করা হয়েছে!`);
+      setProductToDelete(null);
       onRefresh();
     } catch (err: any) {
-      alert(err.message || 'মুছে ফেলা সম্ভব হয়নি।');
+      showToast('error', err.message || 'মুছে ফেলা সম্ভব হয়নি।');
     } finally {
-      setActionLoadingId(null);
+      setIsDeleting(false);
     }
   };
 
@@ -97,18 +112,37 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
       await ApiService.adminReorderProducts(ids);
       onRefresh();
     } catch (err: any) {
-      alert(err.message || 'ক্রম পরিবর্তন ব্যর্থ হয়েছে।');
+      showToast('error', err.message || 'ক্রম পরিবর্তন ব্যর্থ হয়েছে।');
     }
   };
 
   return (
     <div className="space-y-5">
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`p-4 rounded-2xl border text-xs font-bold flex items-center justify-between shadow-md transition-all ${
+          toast.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'
+        }`}>
+          <div className="flex items-center gap-2">
+            {toast.type === 'success' ? (
+              <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            )}
+            <span>{toast.message}</span>
+          </div>
+          <button onClick={() => setToast(null)} className="p-1 hover:opacity-70 cursor-pointer">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Top Header & Add Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <div>
           <h2 className="text-xl font-bold text-slate-900">কোর্স ও প্রোডাক্ট ব্যবস্থাপনা</h2>
           <p className="text-xs text-slate-500">
-            ওয়েবসাইটে প্রদর্শিত সকল কোর্স যুক্ত, সম্পাদনা, মূল্য পরিবর্তন ও সাজান
+            ওয়েবসাইটে প্রদর্শিত সকল কোর্স যুক্ত, সম্পাদনা, মূল্য পরিবর্তন, সাজান ও ডিলিট করুন
           </p>
         </div>
 
@@ -220,7 +254,7 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
                           <img
                             src={prod.thumbnail}
                             alt=""
-                            className="w-16 h-11 rounded-lg object-cover border border-slate-200 shrink-0"
+                            className="w-16 h-12 rounded-lg object-contain bg-slate-100 border border-slate-200 shrink-0"
                           />
                           <div className="max-w-xs sm:max-w-md">
                             <p className="font-bold text-slate-900 line-clamp-1">{prod.name}</p>
@@ -300,9 +334,9 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
                             <Copy className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => handleDelete(prod.id, prod.name)}
+                            onClick={() => setProductToDelete(prod)}
                             disabled={isLoading}
-                            className="p-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg transition-colors cursor-pointer"
+                            className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg transition-colors cursor-pointer"
                             title="মুছে ফেলুন"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -317,6 +351,56 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
           </div>
         )}
       </div>
+
+      {/* In-App Delete Confirmation Modal (Guaranteed to work inside iframe) */}
+      {productToDelete && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-14 h-14 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto shadow-inner">
+              <Trash2 className="w-7 h-7" />
+            </div>
+
+            <div className="text-center space-y-2">
+              <h3 className="text-lg font-black text-slate-900">কোর্সটি মুছে ফেলতে চান?</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                আপনি কি নিশ্চিত যে <strong className="text-slate-900">"{productToDelete.name}"</strong> সম্পূর্ণ ডিলিট করতে চান?
+              </p>
+              <p className="text-[11px] text-red-500 font-semibold bg-red-50 p-2 rounded-xl border border-red-200">
+                ⚠️ এটি মুছে ফেললে ডাটাবেস ও পাবলিক ওয়েবসাইট থেকে সম্পূর্ণ অপসারিত হবে।
+              </p>
+            </div>
+
+            <div className="flex gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setProductToDelete(null)}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors cursor-pointer"
+              >
+                বাতিল
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteProduct}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>মুছে ফেলা হচ্ছে...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    <span>হ্যাঁ, ডিলিট করুন</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,16 +1,27 @@
 /**
  * Compresses and optimizes images before uploading.
+ * Preserves the exact natural dimensions and aspect ratio of whatever size image the user uploads.
  * Works seamlessly on mobile devices (Android Gallery / iOS Photos) and desktop.
  */
 export async function optimizeImage(
   file: File,
-  maxWidth = 1400,
-  maxHeight = 1400,
-  quality = 0.82
+  maxWidth = 2600,
+  maxHeight = 2600,
+  quality = 0.90
 ): Promise<string> {
+  // If file is already reasonably sized (e.g. <= 2.5MB), read as DataURL directly without loss!
+  if (file.size <= 2.5 * 1024 * 1024 && (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp')) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   return new Promise((resolve, reject) => {
     // If SVG or small gif, return as is
-    if (file.type === 'image/svg+xml' || (file.type === 'image/gif' && file.size < 500000)) {
+    if (file.type === 'image/svg+xml' || file.type === 'image/gif') {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = reject;
@@ -25,6 +36,7 @@ export async function optimizeImage(
         let width = img.width;
         let height = img.height;
 
+        // Preserve natural aspect ratio completely
         if (width > maxWidth || height > maxHeight) {
           if (width > height) {
             height = Math.round((height * maxWidth) / width);
@@ -45,7 +57,6 @@ export async function optimizeImage(
           return;
         }
 
-        // Draw image smoothly
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, width, height);

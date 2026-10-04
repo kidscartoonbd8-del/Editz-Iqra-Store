@@ -65,11 +65,11 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         <div className="overflow-y-auto p-6 sm:p-8 space-y-6">
           {/* Main Hero Visual & Thumbnails */}
           <div className="space-y-3">
-            <div className="aspect-16/9 w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-inner">
+            <div className="min-h-[220px] max-h-[420px] w-full rounded-2xl overflow-hidden bg-slate-900/5 border border-slate-200 shadow-inner flex items-center justify-center p-2">
               <img
                 src={selectedImage || product.thumbnail}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="max-h-[400px] w-auto max-w-full object-contain rounded-xl"
               />
             </div>
 

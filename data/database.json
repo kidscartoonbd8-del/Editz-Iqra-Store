@@ -171,6 +171,30 @@
       "orderIndex": 3,
       "createdAt": "2026-10-04T17:06:24.391Z",
       "updatedAt": "2026-10-04T17:06:24.391Z"
+    },
+    {
+      "name": "টাকা বানানোর মেশিন",
+      "shortDescription": "",
+      "fullDescription": "",
+      "currentPrice": 100,
+      "previousPrice": 60,
+      "discountPercentage": 0,
+      "category": "Freelancing",
+      "thumbnail": "/api/uploads/25086_jpg-1791134407912-d719c3.jpg",
+      "images": [
+        "/api/uploads/25086_jpg-1791134407912-d719c3.jpg"
+      ],
+      "status": "published",
+      "isFeatured": true,
+      "offerBadge": "",
+      "courseDuration": "",
+      "courseLevel": "All Levels",
+      "whatYouWillLearn": [],
+      "features": [],
+      "id": "prod-1791134500013-ea034b",
+      "orderIndex": 4,
+      "createdAt": "2026-10-04T17:21:40.013Z",
+      "updatedAt": "2026-10-04T17:21:40.013Z"
     }
   ],
   "offers": [
@@ -233,6 +257,20 @@
       "verifiedAt": "2026-10-04T17:06:49.309Z"
     },
     {
+      "id": "BD-849202",
+      "productId": "prod-spoken-ielts",
+      "productName": "স্পোকেন ইংলিশ ও আইইএলটিএস মাস্টারক্লাস (Band 7+)",
+      "amount": 2800,
+      "customerName": "সাদিয়া তাসনিম",
+      "customerPhone": "01822334455",
+      "customerEmail": "sadia.t@yahoo.com",
+      "paymentMethod": "Nagad",
+      "transactionId": "NG8421098X",
+      "status": "Payment Rejected",
+      "createdAt": "2026-10-04T14:06:24.392Z",
+      "adminNote": ""
+    },
+    {
       "id": "BD-849201",
       "productId": "prod-mern-stack",
       "productName": "কমপ্লিট ফুল-স্ট্যাক ওয়েব ডেভেলপমেন্ট (MERN & Next.js)",
@@ -246,19 +284,6 @@
       "adminNote": "পেমেন্ট ভেরিফাইড। স্টুডেন্ট পোর্টালে যুক্ত করা হয়েছে।",
       "createdAt": "2026-10-03T17:06:24.392Z",
       "verifiedAt": "2026-10-03T21:06:24.392Z"
-    },
-    {
-      "id": "BD-849202",
-      "productId": "prod-spoken-ielts",
-      "productName": "স্পোকেন ইংলিশ ও আইইএলটিএস মাস্টারক্লাস (Band 7+)",
-      "amount": 2800,
-      "customerName": "সাদিয়া তাসনিম",
-      "customerPhone": "01822334455",
-      "customerEmail": "sadia.t@yahoo.com",
-      "paymentMethod": "Nagad",
-      "transactionId": "NG8421098X",
-      "status": "Pending",
-      "createdAt": "2026-10-04T14:06:24.392Z"
     }
   ]
 }

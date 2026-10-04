@@ -205,18 +205,16 @@ export default function App() {
       await ApiService.adminUpdateOrderStatus(orderId, 'Payment Verified');
       loadAdminData();
     } catch (err: any) {
-      alert(err.message || 'ভেরিফাই করতে ব্যর্থ হয়েছে।');
+      console.error('Verify error:', err);
     }
   };
 
   const handleRejectOrder = async (orderId: string) => {
-    const note = prompt('রিজেক্ট করার কারণ লিখুন (যেমন: ভুল TrxID):');
-    if (note === null) return;
     try {
-      await ApiService.adminUpdateOrderStatus(orderId, 'Payment Rejected', note);
+      await ApiService.adminUpdateOrderStatus(orderId, 'Payment Rejected', 'প্রদত্ত TrxID যাচাই করা সম্ভব হয়নি।');
       loadAdminData();
     } catch (err: any) {
-      alert(err.message || 'বাতিল করতে ব্যর্থ হয়েছে।');
+      console.error('Reject error:', err);
     }
   };
 

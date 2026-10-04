@@ -24,12 +24,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* Thumbnail Container */}
         <div
           onClick={() => onViewDetails(product)}
-          className="relative aspect-16/10 w-full overflow-hidden bg-slate-100 cursor-pointer"
+          className="relative h-48 sm:h-54 w-full overflow-hidden bg-slate-900/5 flex items-center justify-center cursor-pointer p-1.5"
         >
           <img
             src={product.thumbnail || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80'}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="max-h-full max-w-full w-auto h-auto object-contain rounded-xl transition-transform duration-300 group-hover:scale-103"
             loading="lazy"
           />
 
